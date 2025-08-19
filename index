@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt xe Taxi điện Nam Thắng</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-xl mx-auto p-6">
+    <h1 class="text-2xl font-bold text-center mb-4">Đặt xe Taxi điện Nam Thắng</h1>
+
+    <form id="taxiForm" class="bg-white shadow-md rounded-xl p-6 space-y-4">
+      <!-- Tên Zalo -->
+      <div>
+        <label class="block font-medium">Tên Zalo</label>
+        <input type="text" id="zaloName" name="zaloName" required
+               class="w-full border p-2 rounded-lg" placeholder="Nhập tên Zalo">
+      </div>
+
+      <!-- Điện thoại -->
+      <div>
+        <label class="block font-medium">Số điện thoại</label>
+        <input type="tel" id="phone" name="phone" required
+               class="w-full border p-2 rounded-lg" placeholder="Nhập số điện thoại">
+      </div>
+
+      <!-- Điểm đón -->
+      <div>
+        <label class="block font-medium">Điểm đón</label>
+        <input type="text" id="pickup" name="pickup" required
+               class="w-full border p-2 rounded-lg" placeholder="Ví dụ: 123 Lê Lợi, Rạch Giá">
+      </div>
+
+      <!-- Điểm đến -->
+      <div>
+        <label class="block font-medium">Điểm đến</label>
+        <input type="text" id="dropoff" name="dropoff" required
+               class="w-full border p-2 rounded-lg" placeholder="Ví dụ: Bệnh viện Đa khoa Kiên Giang">
+      </div>
+
+      <!-- Số lượng xe -->
+      <div>
+        <label class="block font-medium">Số lượng xe</label>
+        <input type="number" id="vehicles" name="vehicles" min="1" value="1" required
+               class="w-full border p-2 rounded-lg">
+      </div>
+
+      <!-- Ghi chú -->
+      <div>
+        <label class="block font-medium">Ghi chú</label>
+        <textarea id="note" name="note" rows="3"
+                  class="w-full border p-2 rounded-lg"
+                  placeholder="Ghi chú thêm (nếu có)"></textarea>
+      </div>
+
+      <!-- Nút submit -->
+      <button type="submit"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg">
+        Gửi yêu cầu
+      </button>
+    </form>
+
+    <!-- Popup thông báo -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+        <h2 class="text-xl font-bold mb-2">✅ Đặt xe thành công!</h2>
+        <p class="mb-4">Chúng tôi sẽ liên hệ bạn trong giây lát.</p>
+        <button onclick="closeModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Lấy zaloName từ query string (nếu có)
+    const urlParams = new URLSearchParams(window.location.search);
+    const zaloName = urlParams.get('zaloName') || urlParams.get('displayName');
+    if (zaloName) {
+      document.getElementById('zaloName').value = decodeURIComponent(zaloName);
+    }
+
+    // Submit form
+    document.getElementById("taxiForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      fetch("YOUR_APPSCRIPT_URL_HERE", {
+        method: "POST",
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          openModal();
+          this.reset();
+        } else {
+          alert("❌ Có lỗi: " + data.message);
+        }
+      })
+      .catch(err => {
+        alert("❌ Lỗi kết nối: " + err);
+      });
+    });
+
+    function openModal() {
+      document.getElementById("successModal").classList.remove("hidden");
+    }
+    function closeModal() {
+      document.getElementById("successModal").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
