@@ -257,6 +257,64 @@
       document.getElementById("spinner").style.display="none";
       alert(res.message||"Đã gửi!");
     }
+    let locationsData = {};
+let vehiclesData = {};
+
+async function loadData() {
+  const locRes = await fetch("YOUR_SCRIPT_URL?action=getLocations");
+  locationsData = await locRes.json();
+
+  const vehRes = await fetch("YOUR_SCRIPT_URL?action=getVehicles");
+  vehiclesData = await vehRes.json();
+
+  renderTinh();
+}
+
+function renderTinh() {
+  const tinhSelect = document.getElementById("tinh");
+  tinhSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành --</option>';
+  Object.keys(locationsData).forEach(tinh => {
+    tinhSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+  });
+}
+
+function onTinhChange() {
+  const tinh = document.getElementById("tinh").value;
+  const huyenSelect = document.getElementById("huyen");
+  huyenSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+  document.getElementById("xa").innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+  document.getElementById("loaiXe").innerHTML = '<option value="">-- Chọn loại xe --</option>';
+
+  if (tinh && locationsData[tinh]) {
+    Object.keys(locationsData[tinh]).forEach(huyen => {
+      huyenSelect.innerHTML += `<option value="${huyen}">${huyen}</option>`;
+    });
+  }
+}
+
+function onHuyenChange() {
+  const tinh = document.getElementById("tinh").value;
+  const huyen = document.getElementById("huyen").value;
+  const xaSelect = document.getElementById("xa");
+  xaSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+  if (tinh && huyen && locationsData[tinh] && locationsData[tinh][huyen]) {
+    locationsData[tinh][huyen].forEach(xa => {
+      xaSelect.innerHTML += `<option value="${xa}">${xa}</option>`;
+    });
+  }
+
+  // 👉 Load loại xe theo tỉnh & huyện
+  const loaiXeSelect = document.getElementById("loaiXe");
+  loaiXeSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+  if (tinh && huyen && vehiclesData[tinh] && vehiclesData[tinh][huyen]) {
+    vehiclesData[tinh][huyen].forEach(loai => {
+      loaiXeSelect.innerHTML += `<option value="${loai}">${loai}</option>`;
+    });
+  }
+}
+
+window.onload = loadData;
   </script>
 </body>
 </html>
