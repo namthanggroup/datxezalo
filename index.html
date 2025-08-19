@@ -3,318 +3,195 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đặt xe Taxi điện</title>
+  <title>Đặt xe Taxi</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f6f8fa;
-      color: #333;
-    }
-    .container {
-      max-width: 480px;
-      margin: auto;
-      padding: 15px;
-    }
-    h2 {
-      font-size: 18px;
-      margin-top: 25px;
-      color: #0056b3;
-      border-left: 4px solid #0056b3;
-      padding-left: 8px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 15px;
-      margin-top: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 8px 0 4px;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f8f9fa; }
+    h2 { margin-top: 20px; color: #333; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; }
     input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      font-size: 15px;
+      width: 100%; padding: 10px; border: 1px solid #ccc;
+      border-radius: 8px; font-size: 16px;
     }
-    textarea {
-      resize: vertical;
+    button {
+      background: #28a745; color: white; border: none; padding: 12px;
+      border-radius: 8px; font-size: 18px; cursor: pointer; width: 100%;
     }
-    .btn {
-      background: #28a745;
-      color: white;
-      padding: 12px;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
+    button:disabled { background: #aaa; }
+    .quantity { display: flex; align-items: center; }
+    .quantity button {
+      width: 40px; height: 40px; font-size: 20px;
+      border-radius: 8px; margin: 0 5px;
     }
-    .btn:disabled {
-      background: #aaa;
-    }
-    .spinner {
-      display: none;
-      margin: 10px auto;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #28a745;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
-    }
-    .row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .row button {
-      width: 40px;
-      height: 40px;
-      border: none;
-      background: #007bff;
-      color: #fff;
-      font-size: 20px;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-    .row input {
-      text-align: center;
-      width: 60px;
-      margin: 0 8px;
-    }
+    .spinner { display: none; margin-top: 10px; text-align: center; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚖 Đặt xe Taxi điện</h1>
+  <h1>🚕 Đặt xe Taxi</h1>
 
-    <!-- Thông tin liên hệ -->
-    <h2>📞 Thông tin liên hệ</h2>
-    <div class="card">
-      <label for="phone">Số điện thoại *</label>
-      <input type="tel" id="phone" required placeholder="Nhập số điện thoại">
-    </div>
-
-    <!-- Địa chỉ -->
-    <h2>📍 Địa chỉ</h2>
-    <div class="card">
-      <label for="tinh">Tỉnh / Thành *</label>
-      <select id="tinh" required></select>
-
-      <label for="huyen">Quận / Huyện *</label>
-      <select id="huyen" required></select>
-
-      <label for="xa">Phường / Xã *</label>
-      <select id="xa" required></select>
-
-      <label for="diaChi">Địa chỉ chi tiết *</label>
-      <input type="text" id="diaChi" required placeholder="Số nhà, tên đường...">
-
-      <button type="button" onclick="getLocation()">📡 Lấy vị trí hiện tại</button>
-      <input type="text" id="toaDo" readonly placeholder="Tọa độ GPS">
-    </div>
-
-    <!-- Phương tiện -->
-    <h2>🚗 Thông tin phương tiện</h2>
-    <div class="card">
-      <label>Số lượng xe *</label>
-      <div class="row">
-        <button type="button" onclick="updateQuantity(-1)">-</button>
-        <input type="number" id="soLuong" value="1" min="1" required>
-        <button type="button" onclick="updateQuantity(1)">+</button>
-      </div>
-
-      <label for="loaiXe">Loại xe *</label>
-      <select id="loaiXe" required></select>
-    </div>
-
-    <!-- Ghi chú -->
-    <h2>📝 Ghi chú</h2>
-    <div class="card">
-      <textarea id="ghiChu" placeholder="Thêm ghi chú (không bắt buộc)"></textarea>
-    </div>
-
-    <!-- Nút submit -->
-    <button class="btn" onclick="submitForm()">Gửi yêu cầu</button>
-    <div class="spinner" id="spinner"></div>
+  <!-- Thông tin liên hệ -->
+  <h2>Thông tin liên hệ</h2>
+  <div class="form-group">
+    <label>Số điện thoại *</label>
+    <input type="tel" id="phone" required>
   </div>
 
+  <!-- Địa chỉ -->
+  <h2>Địa chỉ</h2>
+  <div class="form-group">
+    <label>Tỉnh/Thành *</label>
+    <select id="province" required>
+      <option value="">-- Chọn Tỉnh/Thành --</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Quận/Huyện *</label>
+    <select id="district" required>
+      <option value="">-- Chọn Quận/Huyện --</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Phường/Xã *</label>
+    <input type="text" id="ward" placeholder="Nhập tên phường/xã" required>
+    <div id="ward-suggestions" style="background:#fff;border:1px solid #ccc;display:none;position:absolute;z-index:10;"></div>
+  </div>
+  <div class="form-group">
+    <label>Địa chỉ chi tiết *</label>
+    <input type="text" id="address-detail" required>
+  </div>
+  <div class="form-group">
+    <button type="button" onclick="getLocation()">📍 Lấy vị trí GPS hiện tại</button>
+    <input type="hidden" id="gps">
+  </div>
+
+  <!-- Phương tiện -->
+  <h2>Thông tin phương tiện</h2>
+  <div class="form-group">
+    <label>Số lượng xe *</label>
+    <div class="quantity">
+      <button type="button" onclick="changeQty(-1)">-</button>
+      <input type="number" id="qty" value="1" min="1" readonly>
+      <button type="button" onclick="changeQty(1)">+</button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Loại xe *</label>
+    <select id="car-type" required>
+      <option value="">-- Chọn loại xe --</option>
+    </select>
+  </div>
+
+  <!-- Ghi chú -->
+  <h2>Ghi chú</h2>
+  <div class="form-group">
+    <textarea id="note" rows="3"></textarea>
+  </div>
+
+  <button onclick="submitForm()">Gửi yêu cầu</button>
+  <div class="spinner" id="spinner">⏳ Đang xử lý...</div>
+
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx8EVqG37czQ9ACGPHKDrOD6LUxmVXOLBJxdyKdwvb8YA6EIgfL-c6l0lUgEzHkJFeHLg/exec"; // thay URL Apps Script
-
-    // Prefill từ localStorage
-    window.onload = function() {
-      ["phone","diaChi","toaDo","ghiChu"].forEach(id => {
-        if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
-      });
-      loadData();
-    }
-
-    // Lưu localStorage khi thay đổi
-    document.querySelectorAll("input, textarea").forEach(el=>{
-      el.addEventListener("change", ()=> localStorage.setItem(el.id, el.value));
-    });
-
-    let locations={}, vehicles={};
-
-    async function loadData() {
-      locations = await fetch(API_URL+"?action=getLocations").then(r=>r.json());
-      vehicles = await fetch(API_URL+"?action=getVehicles").then(r=>r.json());
-
-      const tinhSelect = document.getElementById("tinh");
-      tinhSelect.innerHTML = "<option value=''>--Chọn tỉnh--</option>";
-      Object.keys(locations).forEach(t=>{
-        tinhSelect.innerHTML += `<option value="${t}">${t}</option>`;
-      });
-
-      tinhSelect.onchange = ()=>{
-        const huyenSelect=document.getElementById("huyen");
-        huyenSelect.innerHTML="<option value=''>--Chọn huyện--</option>";
-        document.getElementById("xa").innerHTML="";
-        if(tinhSelect.value){
-          Object.keys(locations[tinhSelect.value]).forEach(h=>{
-            huyenSelect.innerHTML+=`<option value="${h}">${h}</option>`;
-          });
-        }
-      };
-
-      document.getElementById("huyen").onchange = ()=>{
-        const xaSelect=document.getElementById("xa");
-        xaSelect.innerHTML="<option value=''>--Chọn xã--</option>";
-        if(tinhSelect.value && document.getElementById("huyen").value){
-          locations[tinhSelect.value][document.getElementById("huyen").value].forEach(x=>{
-            xaSelect.innerHTML+=`<option value="${x}">${x}</option>`;
-          });
-        }
-        loadLoaiXe();
-      };
-    }
-
-    function loadLoaiXe(){
-      const tinh=document.getElementById("tinh").value;
-      const huyen=document.getElementById("huyen").value;
-      const select=document.getElementById("loaiXe");
-      select.innerHTML="<option value=''>--Chọn loại xe--</option>";
-      if(vehicles[tinh] && vehicles[tinh][huyen]){
-        vehicles[tinh][huyen].forEach(lx=>{
-          select.innerHTML+=`<option value="${lx}">${lx}</option>`;
-        });
-      }
-    }
-
-    function updateQuantity(n){
-      const input=document.getElementById("soLuong");
-      let val=parseInt(input.value||1)+n;
-      if(val<1) val=1;
-      input.value=val;
-      localStorage.setItem("soLuong", val);
-    }
-
-    function getLocation(){
-      if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(pos=>{
-          const coords = pos.coords.latitude+","+pos.coords.longitude;
-          document.getElementById("toaDo").value=coords;
-          localStorage.setItem("toaDo", coords);
-        });
-      } else alert("Trình duyệt không hỗ trợ GPS!");
-    }
-
-    async function submitForm(){
-      const phone=document.getElementById("phone").value.trim();
-      const tinh=document.getElementById("tinh").value;
-      const huyen=document.getElementById("huyen").value;
-      const xa=document.getElementById("xa").value;
-      const diaChi=document.getElementById("diaChi").value.trim();
-      const soLuong=document.getElementById("soLuong").value;
-      const loaiXe=document.getElementById("loaiXe").value;
-      const toaDo=document.getElementById("toaDo").value;
-      const ghiChu=document.getElementById("ghiChu").value;
-
-      if(!phone||!tinh||!huyen||!xa||!diaChi||!loaiXe){
-        alert("Vui lòng nhập đầy đủ thông tin bắt buộc!");
-        return;
-      }
-
-      document.getElementById("spinner").style.display="block";
-
-      const res=await fetch(API_URL, {
-        method:"POST",
-        body:JSON.stringify({ phone,tinh,huyen,xa,diaChiChiTiet:diaChi,soLuongXe:soLuong,loaiXe,toaDo,ghiChu })
-      }).then(r=>r.json());
-
-      document.getElementById("spinner").style.display="none";
-      alert(res.message||"Đã gửi!");
-    }
     let locationsData = {};
-let vehiclesData = {};
+    let carConfig = {
+      "Hà Nội": { "Ba Đình": ["4 chỗ", "7 chỗ"], "Hoàn Kiếm": ["4 chỗ"] },
+      "Hồ Chí Minh": { "Quận 1": ["4 chỗ", "16 chỗ"], "Quận 3": ["4 chỗ"] }
+    };
 
-async function loadData() {
-  const locRes = await fetch("YOUR_SCRIPT_URL?action=getLocations");
-  locationsData = await locRes.json();
+    // Load dữ liệu JSON tỉnh/huyện/xã
+    fetch("locations.json")
+      .then(res => res.json())
+      .then(data => {
+        locationsData = data;
+        let provinceSelect = document.getElementById("province");
+        Object.keys(data).forEach(prov => {
+          let opt = document.createElement("option");
+          opt.value = prov; opt.textContent = prov;
+          provinceSelect.appendChild(opt);
+        });
+      });
 
-  const vehRes = await fetch("YOUR_SCRIPT_URL?action=getVehicles");
-  vehiclesData = await vehRes.json();
-
-  renderTinh();
-}
-
-function renderTinh() {
-  const tinhSelect = document.getElementById("tinh");
-  tinhSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành --</option>';
-  Object.keys(locationsData).forEach(tinh => {
-    tinhSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
-  });
-}
-
-function onTinhChange() {
-  const tinh = document.getElementById("tinh").value;
-  const huyenSelect = document.getElementById("huyen");
-  huyenSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-  document.getElementById("xa").innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-  document.getElementById("loaiXe").innerHTML = '<option value="">-- Chọn loại xe --</option>';
-
-  if (tinh && locationsData[tinh]) {
-    Object.keys(locationsData[tinh]).forEach(huyen => {
-      huyenSelect.innerHTML += `<option value="${huyen}">${huyen}</option>`;
+    // Event change tỉnh
+    document.getElementById("province").addEventListener("change", function() {
+      let province = this.value;
+      let districtSelect = document.getElementById("district");
+      districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+      if (province && locationsData[province]) {
+        Object.keys(locationsData[province]).forEach(dist => {
+          let opt = document.createElement("option");
+          opt.value = dist; opt.textContent = dist;
+          districtSelect.appendChild(opt);
+        });
+      }
+      document.getElementById("car-type").innerHTML = '<option value="">-- Chọn loại xe --</option>';
     });
-  }
-}
 
-function onHuyenChange() {
-  const tinh = document.getElementById("tinh").value;
-  const huyen = document.getElementById("huyen").value;
-  const xaSelect = document.getElementById("xa");
-  xaSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+    // Event change huyện
+    document.getElementById("district").addEventListener("change", function() {
+      let province = document.getElementById("province").value;
+      let district = this.value;
+      let wardInput = document.getElementById("ward");
+      wardInput.value = "";
+      wardInput.dataset.list = JSON.stringify(locationsData[province][district] || []);
 
-  if (tinh && huyen && locationsData[tinh] && locationsData[tinh][huyen]) {
-    locationsData[tinh][huyen].forEach(xa => {
-      xaSelect.innerHTML += `<option value="${xa}">${xa}</option>`;
+      // Load loại xe
+      let carSelect = document.getElementById("car-type");
+      carSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+      if (carConfig[province] && carConfig[province][district]) {
+        carConfig[province][district].forEach(type => {
+          let opt = document.createElement("option");
+          opt.value = type; opt.textContent = type;
+          carSelect.appendChild(opt);
+        });
+      }
     });
-  }
 
-  // 👉 Load loại xe theo tỉnh & huyện
-  const loaiXeSelect = document.getElementById("loaiXe");
-  loaiXeSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
-  if (tinh && huyen && vehiclesData[tinh] && vehiclesData[tinh][huyen]) {
-    vehiclesData[tinh][huyen].forEach(loai => {
-      loaiXeSelect.innerHTML += `<option value="${loai}">${loai}</option>`;
+    // Autocomplete xã
+    document.getElementById("ward").addEventListener("input", function() {
+      let list = JSON.parse(this.dataset.list || "[]");
+      let val = this.value.toLowerCase();
+      let suggestions = list.filter(x => x.toLowerCase().includes(val)).slice(0,5);
+      let sugBox = document.getElementById("ward-suggestions");
+      sugBox.innerHTML = "";
+      if (suggestions.length > 0 && val.length > 0) {
+        suggestions.forEach(s => {
+          let div = document.createElement("div");
+          div.textContent = s;
+          div.style.padding = "5px";
+          div.onclick = () => { document.getElementById("ward").value = s; sugBox.style.display = "none"; };
+          sugBox.appendChild(div);
+        });
+        sugBox.style.display = "block";
+      } else {
+        sugBox.style.display = "none";
+      }
     });
-  }
-}
 
-window.onload = loadData;
+    // Số lượng xe
+    function changeQty(delta) {
+      let qty = document.getElementById("qty");
+      let val = parseInt(qty.value) + delta;
+      if (val >= 1) qty.value = val;
+    }
+
+    // Lấy GPS
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          document.getElementById("gps").value = pos.coords.latitude + "," + pos.coords.longitude;
+          alert("Đã lấy vị trí: " + document.getElementById("gps").value);
+        });
+      }
+    }
+
+    // Submit
+    function submitForm() {
+      let spinner = document.getElementById("spinner");
+      spinner.style.display = "block";
+      setTimeout(() => {
+        spinner.style.display = "none";
+        alert("Đặt xe thành công!");
+      }, 1500);
+    }
   </script>
 </body>
 </html>
