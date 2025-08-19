@@ -1,115 +1,1073 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Đặt xe Taxi điện Nam Thắng</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-  <div class="max-w-xl mx-auto p-6">
-    <h1 class="text-2xl font-bold text-center mb-4">Đặt xe Taxi điện Nam Thắng</h1>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Đặt Xe Taxi Điện</title>
 
-    <form id="taxiForm" class="bg-white shadow-md rounded-xl p-6 space-y-4">
-      <!-- Tên Zalo -->
-      <div>
-        <label class="block font-medium">Tên Zalo</label>
-        <input type="text" id="zaloName" name="zaloName" required
-               class="w-full border p-2 rounded-lg" placeholder="Nhập tên Zalo">
-      </div>
-
-      <!-- Điện thoại -->
-      <div>
-        <label class="block font-medium">Số điện thoại</label>
-        <input type="tel" id="phone" name="phone" required
-               class="w-full border p-2 rounded-lg" placeholder="Nhập số điện thoại">
-      </div>
-
-      <!-- Điểm đón -->
-      <div>
-        <label class="block font-medium">Điểm đón</label>
-        <input type="text" id="pickup" name="pickup" required
-               class="w-full border p-2 rounded-lg" placeholder="Ví dụ: 123 Lê Lợi, Rạch Giá">
-      </div>
-
-      <!-- Điểm đến -->
-      <div>
-        <label class="block font-medium">Điểm đến</label>
-        <input type="text" id="dropoff" name="dropoff" required
-               class="w-full border p-2 rounded-lg" placeholder="Ví dụ: Bệnh viện Đa khoa Kiên Giang">
-      </div>
-
-      <!-- Số lượng xe -->
-      <div>
-        <label class="block font-medium">Số lượng xe</label>
-        <input type="number" id="vehicles" name="vehicles" min="1" value="1" required
-               class="w-full border p-2 rounded-lg">
-      </div>
-
-      <!-- Ghi chú -->
-      <div>
-        <label class="block font-medium">Ghi chú</label>
-        <textarea id="note" name="note" rows="3"
-                  class="w-full border p-2 rounded-lg"
-                  placeholder="Ghi chú thêm (nếu có)"></textarea>
-      </div>
-
-      <!-- Nút submit -->
-      <button type="submit"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg">
-        Gửi yêu cầu
-      </button>
-    </form>
-
-    <!-- Popup thông báo -->
-    <div id="successModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-        <h2 class="text-xl font-bold mb-2">✅ Đặt xe thành công!</h2>
-        <p class="mb-4">Chúng tôi sẽ liên hệ bạn trong giây lát.</p>
-        <button onclick="closeModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Lấy zaloName từ query string (nếu có)
-    const urlParams = new URLSearchParams(window.location.search);
-    const zaloName = urlParams.get('zaloName') || urlParams.get('displayName');
-    if (zaloName) {
-      document.getElementById('zaloName').value = decodeURIComponent(zaloName);
-    }
-
-    // Submit form
-    document.getElementById("taxiForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-
-      fetch("YOUR_APPSCRIPT_URL_HERE", {
-        method: "POST",
-        body: JSON.stringify(Object.fromEntries(formData)),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          openModal();
-          this.reset();
-        } else {
-          alert("❌ Có lỗi: " + data.message);
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'banana': '#9ACD32',
+                        'banana-dark': '#7BA428',
+                        'banana-light': '#B8E356'
+                    }
+                }
+            }
         }
-      })
-      .catch(err => {
-        alert("❌ Lỗi kết nối: " + err);
-      });
-    });
+    </script>
 
-    function openModal() {
-      document.getElementById("successModal").classList.remove("hidden");
-    }
-    function closeModal() {
-      document.getElementById("successModal").classList.add("hidden");
-    }
-  </script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #9ACD32 0%, #7BA428 100%); }
+        .loading { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Desktop styles */
+        @media (min-width: 768px) {
+            .desktop-layout {
+                background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+                min-height: 100vh;
+            }
+            .desktop-card {
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                backdrop-filter: blur(10px);
+            }
+        }
+
+        /* Mobile styles */
+        @media (max-width: 767px) {
+            .mobile-layout {
+                background: linear-gradient(180deg, #9ACD32 0%, #7BA428 20%, #f9fafb 20%, #f9fafb 100%);
+            }
+        }
+    </style>
+</head>
+<body class="desktop-layout mobile-layout">
+    <!-- DESKTOP VERSION -->
+    <div class="hidden md:block min-h-screen py-8">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <!-- Desktop Header -->
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4">🚗⚡</div>
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">Đặt Xe Taxi Điện</h1>
+                <p class="text-xl text-gray-600">Dịch vụ thân thiện với môi trường - Nhanh chóng & Tiện lợi</p>
+            </div>
+
+            <!-- Desktop Form Layout -->
+            <div class="desktop-card bg-white/80 rounded-3xl p-8 backdrop-blur-sm">
+                <form id="taxiForm" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 bg-banana rounded-full flex items-center justify-center text-white font-bold">1</span>
+                            Thông tin liên hệ
+                        </h2>
+
+                        <!-- Tên Zalo -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">📱</span> Tên Zalo: <span class="text-red-500">*</span>
+                            </label>
+                            <input class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all text-lg hover:border-gray-300"
+                                  type="text" id="zaloName" name="zaloName" required
+                                  placeholder="Nhập tên Zalo của bạn" />
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">📞</span> Số điện thoại <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="phone" name="phone" required
+                                   placeholder="Nhập số điện thoại (VD: 0901234567)"
+                                   class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all text-lg hover:border-gray-300">
+                        </div>
+
+                        <!-- Số lượng xe -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">🔢</span> Số lượng xe <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex items-center justify-center gap-6 p-6 border-2 border-gray-200 rounded-2xl bg-gray-50">
+                                <button type="button" id="decreaseQty" 
+                                        class="w-14 h-14 bg-banana hover:bg-banana-dark text-white rounded-full font-bold text-2xl transition-all disabled:bg-gray-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl">
+                                    −
+                                </button>
+                                <div class="text-center">
+                                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="10" readonly required
+                                           class="w-20 text-center text-3xl font-bold bg-transparent border-none outline-none">
+                                    <div class="text-lg text-gray-500 font-medium">xe</div>
+                                </div>
+                                <button type="button" id="increaseQty"
+                                        class="w-14 h-14 bg-banana hover:bg-banana-dark text-white rounded-full font-bold text-2xl transition-all disabled:bg-gray-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Vị trí hiện tại -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">🌍</span> Vị trí hiện tại
+                            </label>
+                            <div class="flex gap-3">
+                                <input type="text" id="currentLocation" name="currentLocation" readonly
+                                       placeholder="Nhấn nút để lấy vị trí hiện tại (tùy chọn)"
+                                       class="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl bg-gray-50 text-lg">
+                                <button type="button" id="getLocationBtn" 
+                                        class="px-8 py-4 bg-banana hover:bg-banana-dark text-white rounded-2xl transition-all font-semibold text-lg shadow-lg hover:shadow-xl">
+                                    📍 Lấy vị trí
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                            <span class="w-8 h-8 bg-banana rounded-full flex items-center justify-center text-white font-bold">2</span>
+                            Địa chỉ & Loại xe
+                        </h2>
+
+                        <!-- Địa chỉ -->
+                        <div class="space-y-4">
+                            <label class="block text-gray-700 font-semibold text-lg">
+                                <span class="text-banana text-2xl mr-2">📍</span> Địa chỉ <span class="text-red-500">*</span>
+                            </label>
+                            
+                            <!-- Tỉnh/Thành phố -->
+                            <select id="province" name="province" required
+                                    class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all text-lg hover:border-gray-300">
+                                <option value="">Chọn Tỉnh/Thành phố</option>
+                            </select>
+
+                            <!-- Quận/Huyện -->
+                            <select id="district" name="district" disabled required
+                                    class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all disabled:bg-gray-100 text-lg hover:border-gray-300">
+                                <option value="">Chọn Quận/Huyện</option>
+                            </select>
+
+                            <!-- Phường/Xã -->
+                            <select id="ward" name="ward" disabled required
+                                    class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all disabled:bg-gray-100 text-lg hover:border-gray-300">
+                                <option value="">Chọn Phường/Xã</option>
+                            </select>
+
+                            <!-- Địa chỉ chi tiết -->
+                            <input type="text" id="detailAddress" name="detailAddress" required
+                                   placeholder="Nhập địa chỉ chi tiết (số nhà, tên đường...)"
+                                   class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all text-lg hover:border-gray-300">
+                        </div>
+
+                        <!-- Loại xe -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">🚙</span> Loại xe <span class="text-red-500">*</span>
+                            </label>
+                            <div id="carTypeContainer" class="space-y-3 opacity-50 pointer-events-none">
+                                <div class="text-lg text-gray-500 text-center py-8 bg-gray-50 rounded-2xl">
+                                    Vui lòng chọn địa chỉ trước
+                                </div>
+                            </div>
+                            <input type="hidden" id="carType" name="carType" required>
+                        </div>
+
+                        <!-- Ghi chú -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-3 text-lg">
+                                <span class="text-banana text-2xl mr-2">📝</span> Ghi chú
+                            </label>
+                            <textarea id="note" name="note" rows="4"
+                                      placeholder="Ghi chú thêm (tùy chọn)"
+                                      class="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-banana focus:outline-none transition-all resize-none text-lg hover:border-gray-300"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button - Full Width -->
+                    <div class="lg:col-span-2 pt-6">
+                        <button type="submit" id="submitBtn"
+                                class="w-full gradient-bg text-white py-6 rounded-2xl font-bold text-2xl hover:shadow-2xl transition-all transform hover:scale-105 active:scale-95">
+                            🚀 Đăng ký đặt xe ngay
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE VERSION -->
+    <div class="md:hidden min-h-screen">
+        <!-- Mobile Header -->
+        <div class="gradient-bg px-4 py-6 text-white text-center">
+            <div class="text-5xl mb-3">🚗⚡</div>
+            <h1 class="text-2xl font-bold mb-1">Đặt Xe Taxi Điện</h1>
+            <p class="text-banana-light text-sm">Thân thiện với môi trường</p>
+        </div>
+
+        <!-- Mobile Form -->
+        <div class="px-4 py-6 bg-white">
+            <form id="taxiFormMobile" class="space-y-5">
+                <!-- Mobile: Tên Zalo -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <label class="block text-gray-700 font-medium mb-2 text-base">
+                        <span class="text-banana">📱</span> Tên Zalo <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="zaloNameMobile" name="zaloName" required
+                           placeholder="Nhập tên Zalo của bạn"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors text-base">
+                </div>
+
+                <!-- Mobile: Số điện thoại -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <label class="block text-gray-700 font-medium mb-2 text-base">
+                        <span class="text-banana">📞</span> Số điện thoại <span class="text-red-500">*</span>
+                    </label>
+                    <input type="tel" id="phoneMobile" name="phone" required
+                           placeholder="VD: 0901234567"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors text-base">
+                </div>
+
+                <!-- Mobile: Địa chỉ -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <label class="block text-gray-700 font-medium mb-3 text-base">
+                        <span class="text-banana">📍</span> Địa chỉ <span class="text-red-500">*</span>
+                    </label>
+                    <div class="space-y-3">
+                        <select id="provinceMobile" name="province" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors text-base">
+                            <option value="">Chọn Tỉnh/TP</option>
+                        </select>
+                        <select id="districtMobile" name="district" disabled required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors disabled:bg-gray-100 text-base">
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                        <select id="wardMobile" name="ward" disabled required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors disabled:bg-gray-100 text-base">
+                            <option value="">Chọn Phường/Xã</option>
+                        </select>
+                        <input type="text" id="detailAddressMobile" name="detailAddress" required
+                               placeholder="Số nhà, tên đường..."
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-banana focus:outline-none transition-colors text-base">
+                    </div>
+                </div>
+
+                <!-- Mobile: Số lượng xe -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <label class="block text-gray-700 font-medium mb-3 text-base">
+                        <span class="text-banana">🔢</span> Số lượng xe <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex items-center justify-center gap-4 py-2">
+                        <button type="button" id="decreaseQtyMobile" 
+                                class="w-12 h-12 bg-banana hover:bg-banana-dark text-white rounded-full font-bold text-xl transition-colors disabled:bg-gray-300">
+                            −
+                        </button>
+                        <div class="text-center">
+                            <input type="number" id="quantityMobile" name="quantity" value="1" min="1" max="10" readonly required
+                                   class="w-16 text-center text-2xl font-bold bg-transparent border-none outline-none">
+                            <div class="text-sm text-gray-500">xe</div>
+                        </div>
+                        <button type="button" id="increaseQtyMobile"
+                                class="w-12 h-12 bg-banana hover:bg-banana-dark text-white rounded-full font-bold text-xl transition-colors disabled:bg-gray-300">
+                            +
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile: Loại xe -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                    <label class="block text-gray-700 font-medium mb-3 text-base">
+                        <span class="text-banana">🚙</span> Loại xe <span class="text-red-500">*</span>
+                    </label>
+                    <div id="carTypeContainerMobile" class="opacity-50 pointer-events-none">
+                        <div class="text-sm text-gray-500 text-center py-4">
+                            Chọn địa chỉ trước
+                        </div>
+                    </div>
+                    <input type="hidden" id="carTypeMobile" name="carType" required>
+                </div>
+
+                <!-- Mobile: Vị trí & Ghi chú -->
+                <div class="space-y-4">
+                    <!-- Vị trí -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                        <label class="block text-gray-700 font-medium mb-2 text-base">
+                            <span class="text-banana">🌍</span> Vị trí hiện tại
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" id="currentLocationMobile" name="currentLocation" readonly
+                                   placeholder="Tùy chọn"
+                                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm">
+                            <button type="button" id="getLocationBtnMobile" 
+                                    class="px-3 py-2 bg-banana hover:bg-banana-dark text-white rounded-lg transition-colors text-sm font-medium">
+                                📍
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ghi chú -->
+                    <div class="bg-white rounded-2xl border border-gray-200 p-4">
+                        <label class="block text-gray-700 font-medium mb-2 text-base">
+                            <span class="text-banana">📝</span> Ghi chú
+                        </label>
+                        <textarea id="noteMobile" name="note" rows="3"
+                                  placeholder="Ghi chú thêm (tùy chọn)"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-banana focus:outline-none transition-colors text-sm"></textarea>
+                    </div>
+                </div>
+
+                <!-- Mobile Submit Button -->
+                <div class="pt-4">
+                    <button type="submit" id="submitBtnMobile"
+                            class="w-full gradient-bg text-white py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition-all">
+                        📝 Đăng ký ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Status Message -->
+    <div id="statusMessage" class="fixed bottom-4 left-4 right-4 p-4 rounded-xl text-center hidden z-40"></div>
+
+    <!-- Popup xác nhận đơn hàng -->
+    <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <!-- Header popup -->
+            <div class="gradient-bg p-4 rounded-t-2xl text-white text-center">
+                <h2 class="text-xl font-bold">🔍 Xác nhận đơn hàng</h2>
+                <p class="text-banana-light text-sm">Vui lòng kiểm tra thông tin</p>
+            </div>
+            
+            <!-- Nội dung popup -->
+            <div class="p-6 space-y-4">
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">📱 Tên Zalo:</span>
+                        <span id="confirm-zaloName" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">📞 Số điện thoại:</span>
+                        <span id="confirm-phone" class="font-medium"></span>
+                    </div>
+                    <div class="border-t pt-3">
+                        <div class="text-gray-600 mb-2">📍 Địa chỉ:</div>
+                        <div id="confirm-address" class="text-sm bg-gray-50 p-3 rounded-lg"></div>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">🔢 Số lượng xe:</span>
+                        <span id="confirm-quantity" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">🚙 Loại xe:</span>
+                        <span id="confirm-carType" class="font-medium"></span>
+                    </div>
+                    <div id="confirm-location-section" class="flex justify-between hidden">
+                        <span class="text-gray-600">🌍 Vị trí GPS:</span>
+                        <span id="confirm-location" class="font-medium text-xs"></span>
+                    </div>
+                    <div id="confirm-note-section" class="hidden">
+                        <div class="text-gray-600 mb-2">📝 Ghi chú:</div>
+                        <div id="confirm-note" class="text-sm bg-gray-50 p-3 rounded-lg"></div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancelConfirm" 
+                            class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                        ❌ Hủy
+                    </button>
+                    <button type="button" id="finalSubmit"
+                            class="flex-1 gradient-bg text-white py-3 rounded-xl font-bold hover:shadow-lg transition-all">
+                        ✅ Xác nhận đặt xe
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup thông báo thành công -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full">
+            <!-- Header popup thành công -->
+            <div class="bg-green-500 p-4 rounded-t-2xl text-white text-center">
+                <div class="text-4xl mb-2">✅</div>
+                <h2 class="text-xl font-bold">Đặt xe thành công!</h2>
+                <p class="text-green-100 text-sm">Cảm ơn Quý khách đã sử dụng dịch vụ</p>
+            </div>
+            
+            <!-- Nội dung popup thành công -->
+            <div class="p-6 space-y-4">
+                <div id="successMessage" class="text-center text-gray-700 leading-relaxed"></div>
+                
+                <!-- Button đóng -->
+                <div class="pt-4">
+                    <button type="button" id="closeSuccessModal"
+                            class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold transition-colors">
+                        🎉 Hoàn tất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================
+        // CONFIG
+        // ==========================
+        const API_URL = "YOUR_APPSCRIPT_WEBAPP_URL"; // ví dụ: https://script.google.com/macros/s/AKfycbXXXXX/exec
+
+        // Biến toàn cục
+        let provinceData = [];
+        let carConfigData = [];
+        let isMobile = window.innerWidth < 768;
+
+        // Khởi tạo khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProvinceData();
+            loadCarConfigData();
+            setupQuantityControls();
+            setupModalControls();
+            setupFormSync();
+            
+            // Lấy tham số từ URL
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Tên Zalo
+            const zaloName = urlParams.get('zaloName') || 
+                           urlParams.get('zalo_name') || 
+                           urlParams.get('name') || 
+                           urlParams.get('ten_zalo') ||
+                           urlParams.get('displayName');
+            if (zaloName) {
+                document.getElementById('zaloName').value = decodeURIComponent(zaloName);
+                document.getElementById('zaloNameMobile').value = decodeURIComponent(zaloName);
+            }
+            
+            // Số điện thoại
+            const phone = urlParams.get('phone') || 
+                         urlParams.get('phoneNumber') || 
+                         urlParams.get('sdt') || 
+                         urlParams.get('so_dien_thoai') ||
+                         urlParams.get('mobile');
+            if (phone) {
+                document.getElementById('phone').value = decodeURIComponent(phone);
+                document.getElementById('phoneMobile').value = decodeURIComponent(phone);
+            }
+        });
+
+        // Đồng bộ dữ liệu giữa desktop và mobile form
+        function setupFormSync() {
+            // Sync desktop to mobile
+            document.getElementById('zaloName').addEventListener('input', function() {
+                document.getElementById('zaloNameMobile').value = this.value;
+            });
+            document.getElementById('phone').addEventListener('input', function() {
+                document.getElementById('phoneMobile').value = this.value;
+            });
+            
+            // Sync mobile to desktop
+            document.getElementById('zaloNameMobile').addEventListener('input', function() {
+                document.getElementById('zaloName').value = this.value;
+            });
+            document.getElementById('phoneMobile').addEventListener('input', function() {
+                document.getElementById('phone').value = this.value;
+            });
+        }
+
+        // Thiết lập điều khiển số lượng xe
+        function setupQuantityControls() {
+            // Desktop controls
+            setupQuantityControl('decreaseQty', 'increaseQty', 'quantity');
+            // Mobile controls
+            setupQuantityControl('decreaseQtyMobile', 'increaseQtyMobile', 'quantityMobile');
+        }
+
+        function setupQuantityControl(decreaseId, increaseId, quantityId) {
+            const decreaseBtn = document.getElementById(decreaseId);
+            const increaseBtn = document.getElementById(increaseId);
+            const quantityInput = document.getElementById(quantityId);
+
+            decreaseBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                    updateQuantityButtons(decreaseId, increaseId, quantityId);
+                    // Sync với form khác
+                    syncQuantity(quantityId);
+                }
+            });
+
+            increaseBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 10) {
+                    quantityInput.value = currentValue + 1;
+                    updateQuantityButtons(decreaseId, increaseId, quantityId);
+                    // Sync với form khác
+                    syncQuantity(quantityId);
+                }
+            });
+
+            updateQuantityButtons(decreaseId, increaseId, quantityId);
+        }
+
+        function syncQuantity(sourceId) {
+            const sourceValue = document.getElementById(sourceId).value;
+            if (sourceId === 'quantity') {
+                document.getElementById('quantityMobile').value = sourceValue;
+                updateQuantityButtons('decreaseQtyMobile', 'increaseQtyMobile', 'quantityMobile');
+            } else {
+                document.getElementById('quantity').value = sourceValue;
+                updateQuantityButtons('decreaseQty', 'increaseQty', 'quantity');
+            }
+        }
+
+        function updateQuantityButtons(decreaseId, increaseId, quantityId) {
+            const decreaseBtn = document.getElementById(decreaseId);
+            const increaseBtn = document.getElementById(increaseId);
+            const quantityInput = document.getElementById(quantityId);
+            const currentValue = parseInt(quantityInput.value);
+
+            decreaseBtn.disabled = currentValue <= 1;
+            increaseBtn.disabled = currentValue >= 10;
+        }
+
+        // Thiết lập điều khiển modal
+        function setupModalControls() {
+            const modal = document.getElementById('confirmModal');
+            const cancelBtn = document.getElementById('cancelConfirm');
+            const finalSubmitBtn = document.getElementById('finalSubmit');
+            const successModal = document.getElementById('successModal');
+            const closeSuccessBtn = document.getElementById('closeSuccessModal');
+
+            // Form submissions
+            document.getElementById('taxiForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('taxiFormMobile').addEventListener('submit', handleFormSubmit);
+
+            // Location buttons
+            document.getElementById('getLocationBtn').addEventListener('click', function() {
+                getLocation('currentLocation', this);
+            });
+            document.getElementById('getLocationBtnMobile').addEventListener('click', function() {
+                getLocation('currentLocationMobile', this);
+            });
+
+            cancelBtn.addEventListener('click', hideModal);
+            finalSubmitBtn.addEventListener('click', submitOrderFinal);
+            closeSuccessBtn.addEventListener('click', hideSuccessModal);
+
+            // Close modals on outside click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) hideModal();
+            });
+            successModal.addEventListener('click', function(e) {
+                if (e.target === successModal) hideSuccessModal();
+            });
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                showConfirmModal();
+            }
+        }
+
+        function getLocation(inputId, button) {
+            button.innerHTML = '⏳';
+            button.disabled = true;
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
+                        document.getElementById(inputId).value = `${lat}, ${lng}`;
+                        
+                        // Sync với form khác
+                        if (inputId === 'currentLocation') {
+                            document.getElementById('currentLocationMobile').value = `${lat}, ${lng}`;
+                        } else {
+                            document.getElementById('currentLocation').value = `${lat}, ${lng}`;
+                        }
+                        
+                        button.innerHTML = '✅';
+                        setTimeout(() => {
+                            button.innerHTML = '📍';
+                            button.disabled = false;
+                        }, 2000);
+                    },
+                    function(error) {
+                        showMessage('Không thể lấy vị trí. Vui lòng cho phép truy cập vị trí.', 'error');
+                        button.innerHTML = '📍';
+                        button.disabled = false;
+                    }
+                );
+            } else {
+                showMessage('Trình duyệt không hỗ trợ định vị.', 'error');
+                button.innerHTML = '📍';
+                button.disabled = false;
+            }
+        }
+
+        // ==========================
+        // Thay google.script.run => fetch API
+        // ==========================
+        function loadProvinceData() {
+            fetch(`${API_URL}?action=getProvinceData`)
+                .then(res => res.json())
+                .then(({ success, data, message }) => {
+                    if (!success) throw new Error(message || "Lỗi tải dữ liệu địa chỉ");
+                    provinceData = data || [];
+                    populateProvinces();
+                })
+                .catch(err => {
+                    console.error('Lỗi load dữ liệu tỉnh thành:', err);
+                    showMessage('Lỗi tải dữ liệu địa chỉ', 'error');
+                });
+        }
+
+        function loadCarConfigData() {
+            fetch(`${API_URL}?action=getCarConfigData`)
+                .then(res => res.json())
+                .then(({ success, data, message }) => {
+                    if (!success) throw new Error(message || "Lỗi tải cấu hình xe");
+                    carConfigData = data || [];
+                })
+                .catch(err => {
+                    console.error('Lỗi load dữ liệu cấu hình xe:', err);
+                });
+        }
+
+        function populateProvinces() {
+            const provinceSelect = document.getElementById('province');
+            const provinceSelectMobile = document.getElementById('provinceMobile');
+            
+            const optionHTML = '<option value="">Chọn Tỉnh/Thành phố</option>';
+            provinceSelect.innerHTML = optionHTML;
+            provinceSelectMobile.innerHTML = '<option value="">Chọn Tỉnh/TP</option>';
+            
+            const uniqueProvinces = [...new Set(provinceData.map(item => item.TEN_TINH_TP))];
+            
+            uniqueProvinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province;
+                option.textContent = province;
+                provinceSelect.appendChild(option.cloneNode(true));
+                
+                const optionMobile = document.createElement('option');
+                optionMobile.value = province;
+                optionMobile.textContent = province;
+                provinceSelectMobile.appendChild(optionMobile);
+            });
+
+            // Setup change handlers
+            setupAddressHandlers();
+        }
+
+        function setupAddressHandlers() {
+            // Desktop handlers
+            document.getElementById('province').addEventListener('change', function() {
+                handleProvinceChange(this.value, 'district', 'ward', 'carTypeContainer', 'carType');
+                // Sync với mobile
+                document.getElementById('provinceMobile').value = this.value;
+                handleProvinceChange(this.value, 'districtMobile', 'wardMobile', 'carTypeContainerMobile', 'carTypeMobile');
+            });
+
+            document.getElementById('district').addEventListener('change', function() {
+                const province = document.getElementById('province').value;
+                handleDistrictChange(province, this.value, 'ward', 'carTypeContainer', 'carType');
+                // Sync với mobile
+                document.getElementById('districtMobile').value = this.value;
+                handleDistrictChange(province, this.value, 'wardMobile', 'carTypeContainerMobile', 'carTypeMobile');
+            });
+
+            document.getElementById('ward').addEventListener('change', function() {
+                const province = document.getElementById('province').value;
+                const district = document.getElementById('district').value;
+                handleWardChange(province, district, this.value, 'carTypeContainer', 'carType');
+                // Sync với mobile
+                document.getElementById('wardMobile').value = this.value;
+                handleWardChange(province, district, this.value, 'carTypeContainerMobile', 'carTypeMobile');
+            });
+
+            // Mobile handlers
+            document.getElementById('provinceMobile').addEventListener('change', function() {
+                handleProvinceChange(this.value, 'districtMobile', 'wardMobile', 'carTypeContainerMobile', 'carTypeMobile');
+                // Sync với desktop
+                document.getElementById('province').value = this.value;
+                handleProvinceChange(this.value, 'district', 'ward', 'carTypeContainer', 'carType');
+            });
+
+            document.getElementById('districtMobile').addEventListener('change', function() {
+                const province = document.getElementById('provinceMobile').value;
+                handleDistrictChange(province, this.value, 'wardMobile', 'carTypeContainerMobile', 'carTypeMobile');
+                // Sync với desktop
+                document.getElementById('district').value = this.value;
+                handleDistrictChange(province, this.value, 'ward', 'carTypeContainer', 'carType');
+            });
+
+            document.getElementById('wardMobile').addEventListener('change', function() {
+                const province = document.getElementById('provinceMobile').value;
+                const district = document.getElementById('districtMobile').value;
+                handleWardChange(province, district, this.value, 'carTypeContainerMobile', 'carTypeMobile');
+                // Sync với desktop
+                document.getElementById('ward').value = this.value;
+                handleWardChange(province, district, this.value, 'carTypeContainer', 'carType');
+            });
+
+            // Sync detail address
+            document.getElementById('detailAddress').addEventListener('input', function() {
+                document.getElementById('detailAddressMobile').value = this.value;
+            });
+            document.getElementById('detailAddressMobile').addEventListener('input', function() {
+                document.getElementById('detailAddress').value = this.value;
+            });
+
+            // Sync notes
+            document.getElementById('note').addEventListener('input', function() {
+                document.getElementById('noteMobile').value = this.value;
+            });
+            document.getElementById('noteMobile').addEventListener('input', function() {
+                document.getElementById('note').value = this.value;
+            });
+        }
+
+        function handleProvinceChange(selectedProvince, districtId, wardId, carTypeContainerId, carTypeId) {
+            const districtSelect = document.getElementById(districtId);
+            const wardSelect = document.getElementById(wardId);
+            
+            // Reset
+            districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+            wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            wardSelect.disabled = true;
+            resetCarTypeContainer(carTypeContainerId, carTypeId);
+            
+            if (selectedProvince) {
+                districtSelect.disabled = false;
+                
+                const districts = provinceData
+                    .filter(item => item.TEN_TINH_TP === selectedProvince)
+                    .map(item => item.TEN_QUAN_HUYEN);
+                
+                const uniqueDistricts = [...new Set(districts)];
+                
+                uniqueDistricts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            } else {
+                districtSelect.disabled = true;
+            }
+        }
+
+        function handleDistrictChange(selectedProvince, selectedDistrict, wardId, carTypeContainerId, carTypeId) {
+            const wardSelect = document.getElementById(wardId);
+            
+            wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+            resetCarTypeContainer(carTypeContainerId, carTypeId);
+            
+            if (selectedProvince && selectedDistrict) {
+                wardSelect.disabled = false;
+                
+                const wards = provinceData
+                    .filter(item => 
+                        item.TEN_TINH_TP === selectedProvince && 
+                        item.TEN_QUAN_HUYEN === selectedDistrict
+                    )
+                    .map(item => item.TEN_PX);
+                
+                const uniqueWards = [...new Set(wards)];
+                
+                uniqueWards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward;
+                    option.textContent = ward;
+                    wardSelect.appendChild(option);
+                });
+            } else {
+                wardSelect.disabled = true;
+            }
+        }
+
+        function handleWardChange(selectedProvince, selectedDistrict, selectedWard, carTypeContainerId, carTypeId) {
+            if (selectedProvince && selectedDistrict && selectedWard) {
+                const availableCars = carConfigData
+                    .filter(item => 
+                        item.Tinh_TP === selectedProvince && 
+                        item.Quan_Huyen === selectedDistrict
+                    )
+                    .map(item => item.Loai_Xe);
+                
+                const uniqueCars = [...new Set(availableCars)];
+                
+                if (uniqueCars.length === 0) {
+                    uniqueCars.push("Xe điện 4 chỗ");
+                }
+                
+                createCarTypeButtons(carTypeContainerId, carTypeId, uniqueCars);
+            } else {
+                resetCarTypeContainer(carTypeContainerId, carTypeId);
+            }
+        }
+
+        function createCarTypeButtons(containerId, inputId, cars) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+            const isMobileContainer = containerId.includes('Mobile');
+            
+            container.innerHTML = '';
+            container.className = isMobileContainer ? '' : 'space-y-3';
+            container.style.opacity = '1';
+            container.style.pointerEvents = 'auto';
+            
+            cars.forEach(car => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = isMobileContainer ? 
+                    'w-full p-3 border border-gray-300 rounded-xl text-left hover:border-banana hover:bg-banana-light hover:bg-opacity-10 transition-all car-type-btn mb-2' :
+                    'w-full p-4 border-2 border-gray-200 rounded-2xl text-left hover:border-banana hover:bg-banana-light hover:bg-opacity-10 transition-all car-type-btn';
+                button.setAttribute('data-car-type', car);
+                
+                let icon = '🚗';
+                if (car.includes('4 chỗ')) icon = '🚗';
+                else if (car.includes('7 chỗ')) icon = '🚙';
+                else if (car.includes('16 chỗ')) icon = '🚌';
+                
+                button.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="${isMobileContainer ? 'text-xl' : 'text-2xl'}">${icon}</span>
+                            <span class="font-medium ${isMobileContainer ? 'text-sm' : 'text-lg'}">${car}</span>
+                        </div>
+                        <div class="w-5 h-5 border-2 border-gray-300 rounded-full flex items-center justify-center">
+                            <div class="w-3 h-3 bg-banana rounded-full hidden check-mark"></div>
+                        </div>
+                    </div>
+                `;
+                
+                button.addEventListener('click', function() {
+                    // Reset all buttons in both containers
+                    document.querySelectorAll('.car-type-btn').forEach(btn => {
+                        btn.classList.remove('border-banana', 'bg-banana-light', 'bg-opacity-10');
+                        const cm = btn.querySelector('.check-mark');
+                        if (cm) cm.classList.add('hidden');
+                    });
+                    
+                    // Select current button in both containers
+                    document.querySelectorAll(`[data-car-type="${car}"]`).forEach(btn => {
+                        btn.classList.add('border-banana', 'bg-banana-light', 'bg-opacity-10');
+                        const cm = btn.querySelector('.check-mark');
+                        if (cm) cm.classList.remove('hidden');
+                    });
+                    
+                    // Update both inputs
+                    document.getElementById('carType').value = car;
+                    document.getElementById('carTypeMobile').value = car;
+                });
+                
+                container.appendChild(button);
+            });
+            
+            input.value = '';
+        }
+
+        function resetCarTypeContainer(containerId, inputId) {
+            const container = document.getElementById(containerId);
+            const input = document.getElementById(inputId);
+            const isMobileContainer = containerId.includes('Mobile');
+            
+            container.innerHTML = isMobileContainer ? 
+                '<div class="text-sm text-gray-500 text-center py-4">Chọn địa chỉ trước</div>' :
+                '<div class="text-lg text-gray-500 text-center py-8 bg-gray-50 rounded-2xl">Vui lòng chọn địa chỉ trước</div>';
+            container.className = isMobileContainer ? 'opacity-50 pointer-events-none' : 'space-y-3 opacity-50 pointer-events-none';
+            input.value = '';
+        }
+
+        function showConfirmModal() {
+            const formData = collectFormData();
+            
+            document.getElementById('confirm-zaloName').textContent = formData.zaloName;
+            document.getElementById('confirm-phone').textContent = formData.phone;
+            document.getElementById('confirm-address').textContent = 
+                `${formData.detailAddress}, ${formData.ward}, ${formData.district}, ${formData.province}`;
+            document.getElementById('confirm-quantity').textContent = `${formData.quantity} xe`;
+            document.getElementById('confirm-carType').textContent = formData.carType;
+            
+            const locationSection = document.getElementById('confirm-location-section');
+            if (formData.currentLocation) {
+                document.getElementById('confirm-location').textContent = formData.currentLocation;
+                locationSection.classList.remove('hidden');
+            } else {
+                locationSection.classList.add('hidden');
+            }
+            
+            const noteSection = document.getElementById('confirm-note-section');
+            if (formData.note) {
+                document.getElementById('confirm-note').textContent = formData.note;
+                noteSection.classList.remove('hidden');
+            } else {
+                noteSection.classList.add('hidden');
+            }
+            
+            document.getElementById('confirmModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showSuccessModal(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function collectFormData() {
+            // Lấy dữ liệu từ form đang hiển thị hoặc form desktop làm chính
+            return {
+                zaloName: document.getElementById('zaloName').value || document.getElementById('zaloNameMobile').value,
+                phone: document.getElementById('phone').value || document.getElementById('phoneMobile').value,
+                province: document.getElementById('province').value || document.getElementById('provinceMobile').value,
+                district: document.getElementById('district').value || document.getElementById('districtMobile').value,
+                ward: document.getElementById('ward').value || document.getElementById('wardMobile').value,
+                detailAddress: document.getElementById('detailAddress').value || document.getElementById('detailAddressMobile').value,
+                quantity: document.getElementById('quantity').value || document.getElementById('quantityMobile').value,
+                carType: document.getElementById('carType').value || document.getElementById('carTypeMobile').value,
+                currentLocation: document.getElementById('currentLocation').value || document.getElementById('currentLocationMobile').value,
+                note: document.getElementById('note').value || document.getElementById('noteMobile').value,
+                timestamp: new Date().toLocaleString('vi-VN')
+            };
+        }
+
+        function getCallCenterPhone(province) {
+            const phoneNumbers = {
+              	'An Giang': '02973 56 56 56',
+                'Cà Mau': '02903 56 56 56',
+                'Hậu Giang': '02973 95 95 95',
+                'Kiên Giang': '02973 69 69 69',
+                'Sóc Trăng': '0299.123.4567',
+                'Phú Quốc': '02973 75 75 75',
+                'Bạc Liêu': '02913 75 75 75',
+                'Sóc Trăng': '02913 69 69 69',
+                'Vĩnh Long': '02913 59 59 59'
+            };
+            return phoneNumbers[province] || '1900.1234';
+        }
+
+        function submitOrderFinal() {
+            const finalSubmitBtn = document.getElementById('finalSubmit');
+            finalSubmitBtn.innerHTML = '⏳ Đang gửi...';
+            finalSubmitBtn.disabled = true;
+            
+            const formData = collectFormData();
+            const callCenterPhone = getCallCenterPhone(formData.province);
+
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'submitOrder', data: formData })
+            })
+            .then(res => res.json())
+            .then(result => {
+                hideModal();
+                if (result && result.success) {
+                    const successMessage = `Đã ghi nhận thông tin đặt xe của Quý khách!\n\nTổng đài sẽ kiểm tra xe và điều xe cho Quý khách trong thời gian sớm nhất.\n\nMọi thắc mắc liên hệ tổng đài số: ${callCenterPhone}`;
+                    showSuccessModal(successMessage);
+                    resetAllForms();
+                } else {
+                    const errorMsg = (result && result.message) ? result.message : 'Không xác định';
+                    showMessage('❌ Có lỗi xảy ra: ' + errorMsg, 'error');
+                }
+            })
+            .catch(() => {
+                hideModal();
+                showMessage('❌ Lỗi kết nối. Vui lòng thử lại.', 'error');
+            })
+            .finally(() => {
+                finalSubmitBtn.innerHTML = '✅ Xác nhận đặt xe';
+                finalSubmitBtn.disabled = false;
+            });
+        }
+
+        function validateForm() {
+            const formData = collectFormData();
+            const requiredFields = ['zaloName', 'phone', 'province', 'district', 'ward', 'detailAddress', 'quantity', 'carType'];
+            
+            let isValid = true;
+            const missingFields = [];
+            
+            requiredFields.forEach(field => {
+                if (!formData[field] || !String(formData[field]).trim()) {
+                    isValid = false;
+                    missingFields.push(field);
+                }
+            });
+            
+            if (!isValid) {
+                // Highlight missing fields in both forms
+                missingFields.forEach(field => {
+                    const desktopField = document.getElementById(field);
+                    const mobileField = document.getElementById(field + 'Mobile') || document.getElementById(field.replace('Mobile', ''));
+                    if (desktopField) desktopField.classList.add('border-red-500');
+                    if (mobileField && mobileField !== desktopField) mobileField.classList.add('border-red-500');
+                });
+                showMessage('❌ Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
+            } else {
+                // Remove error highlighting
+                document.querySelectorAll('.border-red-500').forEach(field => {
+                    field.classList.remove('border-red-500');
+                });
+            }
+            return isValid;
+        }
+
+        function resetAllForms() {
+            // Reset both forms
+            document.getElementById('taxiForm').reset();
+            document.getElementById('taxiFormMobile').reset();
+            
+            // Reset dropdowns
+            ['district', 'ward', 'districtMobile', 'wardMobile'].forEach(id => {
+                const element = document.getElementById(id);
+                element.disabled = true;
+                element.innerHTML = id.includes('district') ? '<option value="">Chọn Quận/Huyện</option>' : '<option value="">Chọn Phường/Xã</option>';
+            });
+            
+            // Reset car type containers
+            resetCarTypeContainer('carTypeContainer', 'carType');
+            resetCarTypeContainer('carTypeContainerMobile', 'carTypeMobile');
+            
+            // Reset quantities
+            document.getElementById('quantity').value = '1';
+            document.getElementById('quantityMobile').value = '1';
+            updateQuantityButtons('decreaseQty', 'increaseQty', 'quantity');
+            updateQuantityButtons('decreaseQtyMobile', 'increaseQtyMobile', 'quantityMobile');
+        }
+
+        function showMessage(message, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            if (type === 'success') {
+                statusMessage.className = 'fixed bottom-4 left-4 right-4 p-4 rounded-xl text-center bg-green-100 text-green-700 z-40';
+            } else {
+                statusMessage.className = 'fixed bottom-4 left-4 right-4 p-4 rounded-xl text-center bg-red-100 text-red-700 z-40';
+            }
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden');
+            setTimeout(() => { statusMessage.classList.add('hidden'); }, 5000);
+        }
+    </script>
 </body>
 </html>
