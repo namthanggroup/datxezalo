@@ -574,7 +574,7 @@ async function submitOrderFinal() {
 }
 
 function resetAllForms() {
-  const keep = ["phone"];
+  const keep = ["phone","address","province","district","ward"];
   Object.keys(localStorage).forEach(k => {
     if (!keep.includes(k)) localStorage.removeItem(k);
   });
