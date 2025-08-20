@@ -2,127 +2,116 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đặt xe Taxi điện</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-  <div class="max-w-md w-full bg-white p-6 rounded-2xl shadow-lg">
-    <h1 class="text-2xl font-bold text-center mb-6">🚖 Đặt xe Taxi điện</h1>
-    <form id="bookingForm" class="space-y-6">
+<body class="bg-gray-100 p-4">
+  <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 space-y-6">
 
-      <!-- Thông tin liên hệ -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">📱 Thông tin liên hệ</h2>
-        <div>
-          <label class="block text-sm mb-1">Số điện thoại *</label>
-          <input type="tel" id="phone" required 
-                 class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
-        </div>
-      </div>
+    <!-- Thông tin liên hệ -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">📞 Thông tin liên hệ</h2>
+      <input id="soDienThoai" type="tel" placeholder="Số điện thoại *"
+        class="w-full p-2 border rounded-lg focus:ring focus:ring-green-300" required>
+    </div>
 
-      <!-- Địa chỉ -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">📍 Địa chỉ</h2>
-        <div class="mb-2">
-          <label class="block text-sm mb-1">Tỉnh/Thành *</label>
-          <select id="tinhThanh" required
-                  class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></select>
-        </div>
-        <div class="mb-2">
-          <label class="block text-sm mb-1">Quận/Huyện *</label>
-          <select id="quanHuyen" required
-                  class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></select>
-        </div>
-        <div class="mb-2">
-          <label class="block text-sm mb-1">Phường/Xã *</label>
-          <select id="phuongXa" required
-                  class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></select>
-        </div>
-        <div class="mb-2">
-          <label class="block text-sm mb-1">Địa chỉ chi tiết *</label>
-          <input type="text" id="diaChiChiTiet" required 
-                 placeholder="Số nhà, đường..."
-                 class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="mb-2">
-          <button type="button" id="btnGPS" 
-                  class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">📍 Lấy vị trí GPS</button>
-          <input type="text" id="gpsToaDo" readonly 
-                 placeholder="Chưa lấy vị trí" 
-                 class="w-full border rounded-lg p-2 mt-2 bg-gray-100">
-        </div>
-      </div>
-
-      <!-- Thông tin phương tiện -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">🚗 Thông tin phương tiện</h2>
-        <div class="flex items-center space-x-2 mb-2">
-          <label class="text-sm">Số lượng xe *</label>
-          <div class="flex items-center border rounded-lg">
-            <button type="button" id="decrease" class="px-3 py-1">-</button>
-            <input type="number" id="soLuong" min="1" value="1" required 
-                   class="w-16 text-center border-l border-r">
-            <button type="button" id="increase" class="px-3 py-1">+</button>
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm mb-1">Loại xe *</label>
-          <select id="loaiXe" required
-                  class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500">
-            <option value="">-- Chọn loại xe --</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Ghi chú -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">📝 Ghi chú</h2>
-        <textarea id="ghiChu" rows="2" 
-                  class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"></textarea>
-      </div>
-
-      <!-- Submit -->
-      <div>
-        <button type="submit" id="submitBtn"
-                class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center">
-          <span id="btnText">📤 Gửi yêu cầu</span>
-          <svg id="spinner" class="animate-spin h-5 w-5 ml-2 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
-            <path class="opacity-75" fill="white" d="M4 12a8 8 0 018-8v8z"></path>
-          </svg>
+    <!-- Địa chỉ -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">📍 Địa chỉ</h2>
+      <div class="space-y-2">
+        <select id="tinhThanh" class="w-full p-2 border rounded-lg" required>
+          <option value="">-- Chọn Tỉnh/Thành phố --</option>
+        </select>
+        <select id="quanHuyen" class="w-full p-2 border rounded-lg" required>
+          <option value="">-- Chọn Quận/Huyện --</option>
+        </select>
+        <select id="phuongXa" class="w-full p-2 border rounded-lg" required>
+          <option value="">-- Chọn Phường/Xã --</option>
+        </select>
+        <input id="diaChiChiTiet" type="text" placeholder="Địa chỉ chi tiết *"
+          class="w-full p-2 border rounded-lg focus:ring focus:ring-green-300" required>
+        <button type="button" id="btnGPS"
+          class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
+          📡 Lấy vị trí GPS hiện tại
         </button>
+        <p id="gpsStatus" class="text-sm text-gray-500 mt-1"></p>
       </div>
-    </form>
+    </div>
+
+    <!-- Phương tiện -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">🚗 Thông tin phương tiện</h2>
+      <div class="flex items-center space-x-2 mb-2">
+        <button type="button" id="minusXe"
+          class="px-3 py-1 bg-gray-200 rounded-lg">-</button>
+        <input id="soLuongXe" type="number" value="1" min="1"
+          class="w-16 text-center border rounded-lg">
+        <button type="button" id="plusXe"
+          class="px-3 py-1 bg-gray-200 rounded-lg">+</button>
+      </div>
+      <select id="loaiXe" class="w-full p-2 border rounded-lg" required>
+        <option value="">-- Chọn loại xe --</option>
+      </select>
+    </div>
+
+    <!-- Ghi chú -->
+    <div>
+      <h2 class="text-lg font-semibold mb-2">📝 Ghi chú</h2>
+      <textarea id="ghiChu" rows="3"
+        class="w-full p-2 border rounded-lg focus:ring focus:ring-green-300"
+        placeholder="Ghi chú thêm..."></textarea>
+    </div>
+
+    <!-- Submit -->
+    <div>
+      <button id="submitBtn"
+        class="w-full bg-green-500 text-white p-3 rounded-lg font-semibold hover:bg-green-600 flex items-center justify-center">
+        <span id="btnText">🚕 Đặt xe</span>
+        <svg id="loadingSpinner" class="hidden animate-spin h-5 w-5 ml-2 text-white"
+          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+      </button>
+    </div>
+
   </div>
 
   <script>
     let locations = {};
     let cauHinhXe = [];
 
-    // Load JSON Tỉnh/Quận/Xã
-    fetch("locations.json")
-      .then(res => res.json())
-      .then(data => {
-        locations = data;
-        const tinhSelect = document.getElementById("tinhThanh");
-        tinhSelect.innerHTML = '<option value="">-- Chọn tỉnh/thành --</option>';
-        Object.keys(locations).forEach(tinh => {
-          tinhSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
-        });
+    // Load JSON dữ liệu
+    async function loadData() {
+      const [locRes, xeRes] = await Promise.all([
+        fetch("locations.json").then(r => r.json()),
+        fetch("cau_hinh_xe.json").then(r => r.json())
+      ]);
+      locations = locRes;
+      cauHinhXe = xeRes;
+      renderTinhThanh();
+      prefillData();
+    }
+
+    // Render tỉnh
+    function renderTinhThanh() {
+      const tinhSelect = document.getElementById("tinhThanh");
+      Object.keys(locations).forEach(tinh => {
+        tinhSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
       });
+    }
 
-    // Load JSON loại xe
-    fetch("cau_hinh_xe.json")
-      .then(res => res.json())
-      .then(data => { cauHinhXe = data; });
-
-    // Khi chọn tỉnh => load huyện
+    // Event chọn tỉnh
     document.getElementById("tinhThanh").addEventListener("change", e => {
       const tinh = e.target.value;
       const qhSelect = document.getElementById("quanHuyen");
       const pxSelect = document.getElementById("phuongXa");
-      qhSelect.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
-      pxSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+      qhSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+      pxSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+      document.getElementById("loaiXe").innerHTML = '<option value="">-- Chọn loại xe --</option>';
+
       if (tinh && locations[tinh]) {
         Object.keys(locations[tinh]).forEach(qh => {
           qhSelect.innerHTML += `<option value="${qh}">${qh}</option>`;
@@ -130,94 +119,102 @@
       }
     });
 
-    // Khi chọn huyện => load xã và loại xe
+    // Event chọn quận
     document.getElementById("quanHuyen").addEventListener("change", e => {
       const tinh = document.getElementById("tinhThanh").value;
-      const qh = e.target.value;
+      const quan = e.target.value;
       const pxSelect = document.getElementById("phuongXa");
-      pxSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-      if (tinh && qh && locations[tinh] && locations[tinh][qh]) {
-        locations[tinh][qh].forEach(px => {
+      pxSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+      if (tinh && quan && locations[tinh][quan]) {
+        locations[tinh][quan].forEach(px => {
           pxSelect.innerHTML += `<option value="${px}">${px}</option>`;
         });
       }
 
-      // Load loại xe
+      // Load loại xe theo quận
       const loaiXeSelect = document.getElementById("loaiXe");
       loaiXeSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
-      const options = cauHinhXe
-        .filter(item => item.Tinh_TP === tinh && item.Quan_Huyen === qh)
-        .map(item => `<option value="${item.Loai_Xe}">${item.Loai_Xe}</option>`)
-        .join("");
-      loaiXeSelect.innerHTML += options || '<option value="">(Không có loại xe)</option>';
+      cauHinhXe
+        .filter(item => item.Tinh_TP === tinh && item.Quan_Huyen === quan)
+        .forEach(item => {
+          loaiXeSelect.innerHTML += `<option value="${item.Loai_Xe}">${item.Loai_Xe}</option>`;
+        });
     });
 
-    // Số lượng xe +/- 
-    document.getElementById("increase").onclick = () => {
-      let val = parseInt(document.getElementById("soLuong").value) || 1;
-      document.getElementById("soLuong").value = val + 1;
-    };
-    document.getElementById("decrease").onclick = () => {
-      let val = parseInt(document.getElementById("soLuong").value) || 1;
-      if (val > 1) document.getElementById("soLuong").value = val - 1;
-    };
-
-    // Lấy GPS
-    document.getElementById("btnGPS").onclick = () => {
+    // GPS
+    document.getElementById("btnGPS").addEventListener("click", () => {
+      const gpsStatus = document.getElementById("gpsStatus");
+      gpsStatus.textContent = "Đang lấy vị trí...";
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
-          document.getElementById("gpsToaDo").value = pos.coords.latitude + "," + pos.coords.longitude;
+          gpsStatus.textContent = `✅ ${pos.coords.latitude}, ${pos.coords.longitude}`;
+          localStorage.setItem("toaDo", `${pos.coords.latitude},${pos.coords.longitude}`);
         }, () => {
-          alert("Không lấy được vị trí");
+          gpsStatus.textContent = "❌ Không lấy được vị trí";
         });
+      } else {
+        gpsStatus.textContent = "❌ Trình duyệt không hỗ trợ GPS";
       }
-    };
+    });
 
-    // Prefill localStorage
-    window.onload = () => {
-      ["phone","tinhThanh","quanHuyen","phuongXa","diaChiChiTiet","soLuong","loaiXe","ghiChu"].forEach(id=>{
-        if(localStorage.getItem(id)) document.getElementById(id).value = localStorage.getItem(id);
-      });
-    };
-
-    // Save form to localStorage
-    document.querySelectorAll("#bookingForm input, #bookingForm select, #bookingForm textarea")
-      .forEach(el => {
-        el.addEventListener("change", ()=> localStorage.setItem(el.id, el.value));
-      });
+    // +/- số lượng xe
+    document.getElementById("plusXe").addEventListener("click", () => {
+      let val = parseInt(document.getElementById("soLuongXe").value) || 1;
+      document.getElementById("soLuongXe").value = val + 1;
+    });
+    document.getElementById("minusXe").addEventListener("click", () => {
+      let val = parseInt(document.getElementById("soLuongXe").value) || 1;
+      if (val > 1) document.getElementById("soLuongXe").value = val - 1;
+    });
 
     // Submit
-    document.getElementById("bookingForm").addEventListener("submit", e=>{
-      e.preventDefault();
-      document.getElementById("btnText").classList.add("hidden");
-      document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const btnText = document.getElementById("btnText");
+      const spinner = document.getElementById("loadingSpinner");
+      btnText.textContent = "Đang gửi...";
+      spinner.classList.remove("hidden");
 
-      const payload = {
-        phone: phone.value,
-        tinh: tinhThanh.value,
-        quan: quanHuyen.value,
-        phuong: phuongXa.value,
-        diaChi: diaChiChiTiet.value,
-        gps: gpsToaDo.value,
-        soLuong: soLuong.value,
-        loaiXe: loaiXe.value,
-        ghiChu: ghiChu.value
+      const data = {
+        soDienThoai: document.getElementById("soDienThoai").value,
+        tinh: document.getElementById("tinhThanh").value,
+        quan: document.getElementById("quanHuyen").value,
+        phuong: document.getElementById("phuongXa").value,
+        diaChiChiTiet: document.getElementById("diaChiChiTiet").value,
+        soLuongXe: document.getElementById("soLuongXe").value,
+        loaiXe: document.getElementById("loaiXe").value,
+        toaDo: localStorage.getItem("toaDo") || "",
+        ghiChu: document.getElementById("ghiChu").value
       };
 
-      fetch("https://script.google.com/macros/s/AKfycbx8EVqG37czQ9ACGPHKDrOD6LUxmVXOLBJxdyKdwvb8YA6EIgfL-c6l0lUgEzHkJFeHLg/exec", {
-        method:"POST",
-        body: JSON.stringify(payload)
-      }).then(res=>res.text())
-        .then(msg=>{
-          alert("✅ Đặt xe thành công!");
-          document.getElementById("btnText").classList.remove("hidden");
-          document.getElementById("spinner").classList.add("hidden");
-        }).catch(()=>{
-          alert("❌ Có lỗi, thử lại!");
-          document.getElementById("btnText").classList.remove("hidden");
-          document.getElementById("spinner").classList.add("hidden");
-        });
+      // Lưu localStorage
+      Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+
+      // Gửi Apps Script
+      await fetch("YOUR_APPSCRIPT_URL_HERE", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      btnText.textContent = "🚕 Đặt xe";
+      spinner.classList.add("hidden");
+      alert("✅ Đặt xe thành công!");
     });
+
+    // Prefill từ localStorage
+    function prefillData() {
+      ["soDienThoai","tinhThanh","quanHuyen","phuongXa","diaChiChiTiet","soLuongXe","loaiXe","ghiChu"].forEach(id => {
+        if (localStorage.getItem(id)) {
+          document.getElementById(id).value = localStorage.getItem(id);
+        }
+      });
+      if (localStorage.getItem("toaDo")) {
+        document.getElementById("gpsStatus").textContent = "📍 " + localStorage.getItem("toaDo");
+      }
+    }
+
+    loadData();
   </script>
 </body>
 </html>
