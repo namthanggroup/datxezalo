@@ -8,14 +8,17 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
   <div class="max-w-md mx-auto">
-    <header class="p-4 sticky top-0 bg-white/90 backdrop-blur z-10 border-b">
-      <h1 class="text-xl font-bold text-center text-indigo-600">Đặt xe Taxi điện Nam Thắng</h1>
+    <header class="p-4 sticky top-0 bg-lime-500 backdrop-blur z-10 border-b">
+			<h1 class="text-3xl text-white font-bold mb-2 bg-lime-500 from-banana to-banana-dark ">
+    Đặt Xe Taxi Điện Nam Thắng
+</h1>
+
     </header>
 
     <form id="orderForm" class="p-4 space-y-5">
       <!-- Liên hệ -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Thông tin liên hệ</h2>
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Điện thoại liên hệ (*)</h2>
         <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0\\d{9,10}$"
                placeholder="Số điện thoại (VD: 0912345678)"
                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -23,10 +26,10 @@
 
       <!-- Điểm đón -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đón</h2>
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đón (*)</h2>
 
         <!-- Province -->
-        <label class="text-gray-600 mb-1 block">Tỉnh/Thành phố</label>
+        <label class="text-gray-600 mb-1 block">Tỉnh/Thành phố (*)</label>
         <div id="provinceWrapper" class="relative">
           <input id="provinceSearch" type="text" placeholder="Tìm Tỉnh/Thành phố..."
                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -39,7 +42,7 @@
         <!-- District + Ward -->
         <div class="grid grid-cols-1 gap-3 mt-3">
           <div>
-            <label class="text-gray-600 mb-1 block">Quận/Huyện</label>
+            <label class="text-gray-600 mb-1 block">Quận/Huyện (*)</label>
             <div id="districtWrapper" class="relative">
               <input id="districtSearch" type="text" placeholder="Tìm Quận/Huyện..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -50,7 +53,7 @@
             </div>
           </div>
           <div>
-            <label class="text-gray-600 mb-1 block">Phường/Xã</label>
+            <label class="text-gray-600 mb-1 block">Phường/Xã (*)</label>
             <div id="wardWrapper" class="relative">
               <input id="wardSearch" type="text" placeholder="Tìm Phường/Xã..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -65,44 +68,44 @@
         <input id="address" type="text" required placeholder="Địa chỉ chi tiết"
                class="w-full p-3 border rounded-lg mt-3">
         <button type="button" id="getLocation"
-                class="w-full bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg mt-2">
-          📍 Lấy vị trí GPS & phân giải tên (Nominatim)
+                class="w-full bg-lime-500 text-indigo-700 px-4 py-2 rounded-lg mt-2">
+          📍 Lấy vị trí GPS
         </button>
         <p id="gpsStatus" class="text-sm text-gray-500 mt-1"></p>
       </section>
 
       <!-- Điểm đến -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đến</h2>
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đến(nếu có)</h2>
         <input id="destination" type="text" placeholder="Nhập điểm đến (đường, số nhà...)"
                class="w-full p-3 border rounded-lg">
       </section>
 
       <!-- Hành trình & xe -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Hành trình & xe</h2>
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Thông tin xe</h2>
 
         <div class="flex items-center gap-2 mb-3">
-          <label class="text-gray-600">Số lượng xe:</label>
-          <button type="button" id="decreaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">-</button>
+          <label class="text-gray-600">Số lượng xe: (*)</label>
+          <button type="button" id="decreaseQty" class="px-3 py-2 bg-lime-500 rounded-lg">-</button>
           <input id="quantity" type="number" min="1" value="1" required class="w-16 text-center border rounded-lg">
-          <button type="button" id="increaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">+</button>
+          <button type="button" id="increaseQty" class="px-3 py-2 bg-lime-500 rounded-lg">+</button>
         </div>
 
         <!-- Loại cuốc: button group -->
-        <label class="text-gray-600 block mb-2">Loại cuốc:</label>
+        <label class="text-gray-600 block mb-2">Loại cuốc: (*)</label>
         <input type="hidden" id="tripType" value="">
         <div id="tripTypeGroup" class="flex gap-2 flex-wrap mb-3"></div>
 
         <!-- Loại xe: button group (đổ động theo tỉnh/huyện) -->
-        <label class="text-gray-600 block mb-2">Loại xe:</label>
+        <label class="text-gray-600 block mb-2">Loại xe: (*)</label>
         <input type="hidden" id="carType" value="">
         <div id="carTypeGroup" class="flex gap-2 flex-wrap"></div>
       </section>
 
       <!-- Ghi chú -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Ghi chú</h2>
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Ghi chú (Nếu có)</h2>
         <textarea id="note" rows="3" placeholder="Ví dụ: Đón lúc 8h, có hành lý..."
                   class="w-full p-3 border rounded-lg"></textarea>
       </section>
@@ -111,7 +114,7 @@
       <div class="h-24"></div>
       <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3">
         <button type="button" id="openConfirm" 
-                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                class="w-full bg-lime-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition">
           🚕 Đặt cuốc ngay
         </button>
         <p id="submitStatus" class="text-center text-sm mt-2"></p>
@@ -122,7 +125,7 @@
   <!-- Modal xác nhận -->
   <div id="confirmModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
     <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
-      <h3 class="text-lg font-semibold mb-3">Xác nhận đặt chuyến</h3>
+      <h3 class="text-lg font-semibold mb-3"> ✍️Xác nhận đặt chuyến</h3>
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
           <tbody id="confirmTable" class="align-top"></tbody>
@@ -557,8 +560,9 @@ async function submitOrderFinal() {
       document.getElementById("submitStatus").innerText = '❌ Có lỗi xảy ra khi gửi.';
     } else {
       const successMessage =
-        `Đã ghi nhận thông tin đặt xe của Quý khách!\n\n` +
+        `💐 Đã ghi nhận thông tin đặt xe của Quý khách!\n\n` +
         `Tổng đài sẽ kiểm tra và điều xe trong thời gian sớm nhất.\n\n` +
+        `Tải app Taxi Nam Thắng tại đây taxinamthang.vn/taiapp.\n\n` +
         `Mọi thắc mắc liên hệ tổng đài: ${callCenterPhone}`;
       showSuccessModal(successMessage);
       resetAllForms();
