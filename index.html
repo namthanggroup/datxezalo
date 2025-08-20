@@ -246,4 +246,192 @@ document.getElementById("getLocation").onclick = () => {
       // Ví dụ hint:
       // const provinceHint = info.address?.state || info.address?.province || "";
       // if (!document.getElementById("province").value && provinceHint) {
-      //   status.innerText
+      //   status.innerText += `\nGợi ý tỉnh: ${provinceHint}`;
+      // }
+
+    } catch (err) {
+      console.error(err);
+      status.innerText = "Đã lấy GPS nhưng không phân giải được tên địa điểm.";
+    }
+  }, () => {
+    status.innerText = "Không lấy được GPS.";
+  }, { enableHighAccuracy: true, timeout: 10000 });
+};
+
+/* ================== LOCAL STORAGE (đầy đủ) ================== */
+let saveTimer;
+function saveForm() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const fields = ["phone","province","district","ward","address","quantity","carType","note","tripType","destination"];
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) localStorage.setItem(id, el.value);
+    });
+  }, 150);
+}
+function cascadeLoadFromLocalStorage() {
+  const get = k => localStorage.getItem(k) || "";
+  ["phone","address","quantity","note","destination"].forEach(id=>{
+    if (get(id)) document.getElementById(id).value = get(id);
+  });
+  if (get("tripType")) document.getElementById("tripType").value = get("tripType");
+
+  if (get("province")) {
+    document.getElementById("province").value = get("province");
+    document.getElementById("province").dispatchEvent(new Event("change"));
+  }
+  if (get("district")) {
+    document.getElementById("district").value = get("district");
+    document.getElementById("district").dispatchEvent(new Event("change"));
+  }
+  if (get("ward")) {
+    document.getElementById("ward").value = get("ward");
+  }
+  if (get("carType")) {
+    document.getElementById("carType").value = get("carType");
+  }
+}
+document.querySelectorAll("input,select,textarea").forEach(el=>{
+  el.addEventListener("change", saveForm);
+  el.addEventListener("keyup", saveForm);
+});
+
+/* ================== SUBMIT FLOW (CONFIRM MODAL) ================== */
+function collectFormData() {
+  const province = document.getElementById("province").value;
+  const district = document.getElementById("district").value;
+  const ward = document.getElementById("ward").value;
+  const addr = document.getElementById("address").value.trim();
+  const fullAddress = `${addr} - ${ward} - ${district} - ${province}`;
+
+  return {
+    phone: (document.getElementById("phone").value || "").trim(),
+    province, district, ward,
+    address: fullAddress,
+    quantity: Number(document.getElementById("quantity").value) || 1,
+    carType: document.getElementById("carType").value,
+    gps: localStorage.getItem("gps") || "",
+    note: (document.getElementById("note").value || "").trim(),
+    tripType: document.getElementById("tripType").value,
+    destination: (document.getElementById("destination").value || "").trim()
+  };
+}
+
+function showModal() {
+  document.getElementById("confirmModal").classList.remove("hidden");
+  document.getElementById("confirmModal").classList.add("flex");
+}
+function hideModal() {
+  document.getElementById("confirmModal").classList.add("hidden");
+  document.getElementById("confirmModal").classList.remove("flex");
+}
+function showSuccessModal(message) {
+  document.getElementById("successMsg").innerText = message;
+  document.getElementById("successModal").classList.remove("hidden");
+  document.getElementById("successModal").classList.add("flex");
+}
+function hideSuccessModal() {
+  document.getElementById("successModal").classList.add("hidden");
+  document.getElementById("successModal").classList.remove("flex");
+}
+
+function renderConfirmTable(d) {
+  const rows = [
+    ["SĐT", d.phone],
+    ["Tỉnh/TP", d.province],
+    ["Quận/Huyện", d.district],
+    ["Phường/Xã", d.ward],
+    ["Địa chỉ đón", d.address],
+    ["Điểm đến", d.destination || "(chưa nhập)"],
+    ["Loại cuốc", d.tripType === "xa" ? "Đi xa (>20km)" : "Đi ngắn (≤20km)"],
+    ["Số khách", d.quantity],
+    ["Loại xe", d.carType],
+    ["Ghi chú", d.note || "(không)"]
+  ];
+  const tbody = document.getElementById("confirmTable");
+  tbody.innerHTML = rows.map(([k,v]) =>
+    `<tr><td class="py-2 pr-3 text-gray-500">${k}</td><td class="py-2 font-medium">${v}</td></tr>`
+  ).join("");
+}
+
+document.getElementById("openConfirm").addEventListener("click", () => {
+  const d = collectFormData();
+
+  // Frontend validate ngắn gọn
+  const status = document.getElementById("submitStatus");
+  status.innerText = "";
+  if (!/^0\d{9,10}$/.test(d.phone)) {
+    status.innerText = "⚠️ SĐT phải bắt đầu bằng 0 và có 10–11 số.";
+    return;
+  }
+  if (!d.province || !d.district || !d.ward || !d.address) {
+    status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã và nhập địa chỉ chi tiết.";
+    return;
+  }
+  if (!d.carType) {
+    status.innerText = "⚠️ Khu vực/loại xe chưa sẵn sàng.";
+    return;
+  }
+
+  renderConfirmTable(d);
+  showModal();
+});
+
+document.getElementById("cancelConfirm").addEventListener("click", hideModal);
+document.getElementById("closeSuccess").addEventListener("click", hideSuccessModal);
+
+/* Gửi lần cuối (sau khi xác nhận) */
+document.getElementById("finalSubmit").addEventListener("click", submitOrderFinal);
+
+async function submitOrderFinal() {
+  const finalSubmitBtn = document.getElementById('finalSubmit');
+  finalSubmitBtn.innerHTML = '⏳ Đang gửi...';
+  finalSubmitBtn.disabled = true;
+
+  const formData = collectFormData();
+  const callCenterPhone = getCallCenterPhone(formData.province);
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+    const payload = await res.json().catch(() => ({}));
+
+    hideModal();
+
+    if (!res.ok || payload.ok === false) {
+      const errorMsg = payload && payload.error ? payload.error : `HTTP ${res.status}`;
+      document.getElementById("submitStatus").innerText = '❌ Có lỗi xảy ra: ' + errorMsg;
+    } else {
+      const successMessage =
+        `Đã ghi nhận thông tin đặt xe của Quý khách!\n\n` +
+        `Tổng đài sẽ kiểm tra và điều xe trong thời gian sớm nhất.\n\n` +
+        `Mọi thắc mắc liên hệ tổng đài: ${callCenterPhone}`;
+      showSuccessModal(successMessage);
+      resetAllForms();
+    }
+  } catch (error) {
+    hideModal();
+    document.getElementById("submitStatus").innerText = '❌ Lỗi kết nối. Vui lòng thử lại.';
+  } finally {
+    finalSubmitBtn.innerHTML = '✅ Xác nhận đặt xe';
+    finalSubmitBtn.disabled = false;
+  }
+}
+
+function resetAllForms() {
+  // Giữ lại SĐT cho lần đặt sau (nếu muốn); hoặc xóa sạch:
+  const keep = ["phone"];
+  Object.keys(localStorage).forEach(k => {
+    if (!keep.includes(k)) localStorage.removeItem(k);
+  });
+  document.getElementById("orderForm").reset();
+  // reset sticky status
+  document.getElementById("submitStatus").innerText = "";
+}
+</script>
+</body>
+</html>
