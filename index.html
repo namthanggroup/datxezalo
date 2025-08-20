@@ -40,7 +40,7 @@
                  class="w-full p-3 border rounded-lg">
           <button type="button" id="getLocation"
                   class="w-full bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg">
-            📍 Lấy vị trí GPS & phân giải tên (miễn phí)
+            📍 Lấy vị trí GPS & phân giải tên (miễn phí, địa giới cũ)
           </button>
           <p id="gpsStatus" class="text-sm text-gray-500"></p>
         </div>
@@ -56,6 +56,7 @@
       <!-- Hành trình & xe -->
       <section class="bg-white rounded-xl p-4 shadow-sm">
         <h2 class="text-base font-semibold text-gray-700 mb-3">Hành trình & xe</h2>
+
         <div class="flex items-center gap-2 mb-3">
           <label class="text-gray-600">Số khách:</label>
           <button type="button" id="decreaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">-</button>
@@ -63,15 +64,15 @@
           <button type="button" id="increaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">+</button>
         </div>
 
-        <select id="tripType" required class="w-full p-3 border rounded-lg mb-3">
-          <option value="">-- Loại cuốc --</option>
-          <option value="ngan">Chuyến đi ngắn (&le; 20km)</option>
-          <option value="xa">Chuyến đi xa (&gt; 20km)</option>
-        </select>
+        <!-- Loại cuốc: button group -->
+        <label class="text-gray-600 block mb-2">Loại cuốc:</label>
+        <input type="hidden" id="tripType" value="">
+        <div id="tripTypeGroup" class="flex gap-2 flex-wrap mb-3"></div>
 
-        <select id="carType" required class="w-full p-3 border rounded-lg">
-          <option value="">-- Chọn loại xe --</option>
-        </select>
+        <!-- Loại xe: button group (đổ động theo tỉnh/huyện) -->
+        <label class="text-gray-600 block mb-2">Loại xe:</label>
+        <input type="hidden" id="carType" value="">
+        <div id="carTypeGroup" class="flex gap-2 flex-wrap"></div>
       </section>
 
       <!-- Ghi chú -->
@@ -122,7 +123,7 @@
 
 <script>
 /* ================== CONFIG ================== */
-const scriptURL = "https://script.google.com/macros/s/AKfycbx8EVqG37czQ9ACGPHKDrOD6LUxmVXOLBJxdyKdwvb8YA6EIgfL-c6l0lUgEzHkJFeHLg/exec"; // WebApp URL
+const scriptURL = "https://script.google.com/macros/s/AKfycbx8EVqG37czQ9ACGPHKDrOD6LUxmVXOLBJxdyKdwvb8YA6EIgfL-c6l0lUgEzHkJFeHLg/exec"; // TODO: thay bằng WebApp URL của bạn
 let locationsData = {};
 let carConfigData = {};
 
@@ -135,10 +136,10 @@ function getCallCenterPhone(province) {
     'Kiên Giang': '02973 69 69 69',
     'Phú Quốc': '02973 75 75 75',
     'Bạc Liêu': '02913 75 75 75',
-    'Sóc Trăng': '0299 123 4567', // chuẩn hóa 1 số cho Sóc Trăng
+    'Sóc Trăng': '0299 123 4567',
     'Vĩnh Long': '02913 59 59 59'
   };
-  return phoneNumbers[province] || '0938 267 888';
+  return phoneNumbers[province] || '1900 1234';
 }
 
 /* ================== LOAD DATA ================== */
@@ -175,14 +176,16 @@ document.getElementById("province").addEventListener("change", e => {
     districtSelect.innerHTML += `<option value="${qh}">${qh}</option>`;
   });
 
-  // Reset car types khi đổi tỉnh
-  const carSelect = document.getElementById("carType");
-  carSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+  // Reset nhóm nút loại xe khi đổi tỉnh
+  renderCarTypeGroup([]);
+  document.getElementById("carType").value = "";
 });
 
 document.getElementById("district").addEventListener("change", e => {
   const province = document.getElementById("province").value;
   const district = e.target.value;
+
+  // Đổ xã
   const wards = locationsData[province]?.[district] || [];
   const wardSelect = document.getElementById("ward");
   wardSelect.innerHTML = '<option value="">-- Phường/Xã --</option>';
@@ -190,13 +193,10 @@ document.getElementById("district").addEventListener("change", e => {
     wardSelect.innerHTML += `<option value="${px}">${px}</option>`;
   });
 
-  // loại xe theo tỉnh + huyện
-  const carTypes = carConfigData[province]?.[district] || [];
-  const carSelect = document.getElementById("carType");
-  carSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
-  carTypes.forEach(car => {
-    carSelect.innerHTML += `<option value="${car}">${car}</option>`;
-  });
+  // Đổ Loại xe dạng button
+  const carTypes = (carConfigData[province]?.[district] || []).map(v => ({ value: v, label: v }));
+  const savedCarType = localStorage.getItem("carType") || "";
+  renderCarTypeGroup(carTypes, savedCarType);
 });
 
 /* ================== QTY ================== */
@@ -218,6 +218,97 @@ async function reverseGeocode(lat, lon) {
   return res.json();
 }
 
+// Chuẩn hoá tên để khớp giữa dữ liệu OSM và file locations.json
+function normalizeName(s) {
+  if (!s) return "";
+  return s.replace(/-/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+// Lấy địa giới HÀNH CHÍNH lịch sử (trước 01/07/2025) bằng Overpass
+async function historicAdminAt(lat, lon) {
+  const date = "2025-06-30T23:59:59Z"; // mốc địa giới CŨ
+  const query = `
+[out:json][timeout:25][date:"${date}"];
+is_in(${lat},${lon})->.a;
+rel(area.a)[boundary=administrative];
+out tags;
+`;
+  // Overpass chính + fallback mirror
+  const endpoints = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter"
+  ];
+  let json = null, lastErr = null;
+  for (const ep of endpoints) {
+    try {
+      const res = await fetch(ep, { method: "POST", body: query });
+      if (res.ok) { json = await res.json(); break; }
+    } catch (e) { lastErr = e; }
+  }
+  if (!json) throw (lastErr || new Error("Overpass failed"));
+
+  // Lọc theo admin_level (VN thường: 4=Tỉnh/TP, 6=Quận/Huyện/Thị Xã, 8=Phường/Xã)
+  let adm4="", adm6="", adm8="";
+  for (const el of (json.elements || [])) {
+    const t = el.tags || {};
+    const level = t["admin_level"];
+    const name = t["name:vi"] || t["name"] || "";
+    if (!level || !name) continue;
+    if (level === "4" && !adm4) adm4 = name;
+    if (level === "6" && !adm6) adm6 = name;
+    if (level === "8" && !adm8) adm8 = name;
+  }
+  return { province: adm4, district: adm6, ward: adm8 };
+}
+
+// Thử khớp tên OSM vào dữ liệu dropdown hiện có và auto-select
+function trySelectOldAdminToDropdowns(old) {
+  const provinceSel = document.getElementById("province");
+  const targetProv = normalizeName(old.province);
+  if (targetProv) {
+    let foundProv = "";
+    for (const opt of provinceSel.options) {
+      if (normalizeName(opt.value) === targetProv || normalizeName(opt.text) === targetProv) {
+        foundProv = opt.value; break;
+      }
+    }
+    if (foundProv) {
+      provinceSel.value = foundProv;
+      provinceSel.dispatchEvent(new Event("change"));
+    }
+  }
+
+  const districtSel = document.getElementById("district");
+  const targetDist = normalizeName(old.district);
+  if (targetDist) {
+    setTimeout(() => {
+      let foundDist = "";
+      for (const opt of districtSel.options) {
+        if (normalizeName(opt.value) === targetDist || normalizeName(opt.text) === targetDist) {
+          foundDist = opt.value; break;
+        }
+      }
+      if (foundDist) {
+        districtSel.value = foundDist;
+        districtSel.dispatchEvent(new Event("change"));
+      }
+
+      const wardSel = document.getElementById("ward");
+      const targetWard = normalizeName(old.ward);
+      if (targetWard) {
+        setTimeout(() => {
+          for (const opt of wardSel.options) {
+            if (normalizeName(opt.value) === targetWard || normalizeName(opt.text) === targetWard) {
+              wardSel.value = opt.value; break;
+            }
+          }
+          saveForm();
+        }, 0);
+      }
+    }, 0);
+  }
+}
+
 document.getElementById("getLocation").onclick = () => {
   const status = document.getElementById("gpsStatus");
   if (!navigator.geolocation) {
@@ -230,25 +321,28 @@ document.getElementById("getLocation").onclick = () => {
       const lat = pos.coords.latitude, lon = pos.coords.longitude;
       localStorage.setItem("gps", `${lat},${lon}`);
 
+      // 1) Nominatim (địa chỉ hiện thời để hiển thị dễ hiểu)
       const info = await reverseGeocode(lat, lon);
       const nice = info.display_name || `${lat}, ${lon}`;
       status.innerText = `📍 ${nice}`;
 
-      // Ưu tiên GPS: nếu user chưa nhập địa chỉ đón thì gợi ý điền
+      // Gợi ý điền địa chỉ chi tiết nếu trống
       const addrInput = document.getElementById("address");
       if (addrInput && !addrInput.value.trim()) {
         addrInput.value = nice;
         saveForm();
       }
 
-      // Theo yêu cầu: vẫn để user tự chọn tỉnh — KHÔNG tự động set province.
-      // (Nếu cần auto-gợi ý tỉnh: có thể show hint ở status, không auto select)
-      // Ví dụ hint:
-      // const provinceHint = info.address?.state || info.address?.province || "";
-      // if (!document.getElementById("province").value && provinceHint) {
-      //   status.innerText += `\nGợi ý tỉnh: ${provinceHint}`;
-      // }
-
+      // 2) Overpass lịch sử (địa giới CŨ, mốc 2025-06-30) -> tự điền dropdown
+      try {
+        const oldAdmin = await historicAdminAt(lat, lon);
+        if (oldAdmin.province || oldAdmin.district || oldAdmin.ward) {
+          trySelectOldAdminToDropdowns(oldAdmin);
+          status.innerText += `\n(Đã tự điền theo địa giới cũ trước 01/07/2025)`;
+        }
+      } catch (e) {
+        console.warn("Overpass historic admin lookup failed:", e);
+      }
     } catch (err) {
       console.error(err);
       status.innerText = "Đã lấy GPS nhưng không phân giải được tên địa điểm.";
@@ -275,8 +369,13 @@ function cascadeLoadFromLocalStorage() {
   ["phone","address","quantity","note","destination"].forEach(id=>{
     if (get(id)) document.getElementById(id).value = get(id);
   });
-  if (get("tripType")) document.getElementById("tripType").value = get("tripType");
 
+  // Trip type buttons
+  const savedTrip = get("tripType");
+  renderTripTypeButtons(savedTrip);
+  document.getElementById("tripType").value = savedTrip;
+
+  // Province -> District -> Ward -> CarType (buttons)
   if (get("province")) {
     document.getElementById("province").value = get("province");
     document.getElementById("province").dispatchEvent(new Event("change"));
@@ -288,14 +387,69 @@ function cascadeLoadFromLocalStorage() {
   if (get("ward")) {
     document.getElementById("ward").value = get("ward");
   }
-  if (get("carType")) {
-    document.getElementById("carType").value = get("carType");
+  const savedCar = get("carType");
+  if (savedCar) {
+    // sẽ được apply khi district change render xong group
+    setTimeout(() => {
+      const elHidden = document.getElementById("carType");
+      elHidden.value = savedCar;
+      // tô active nếu đã vẽ group
+      Array.from(document.getElementById("carTypeGroup").children).forEach(btn => {
+        if (btn.dataset && btn.dataset.value === savedCar) {
+          btn.className = "px-3 py-2 rounded-lg border text-sm bg-indigo-600 text-white border-indigo-600";
+        }
+      });
+    }, 0);
   }
 }
 document.querySelectorAll("input,select,textarea").forEach(el=>{
   el.addEventListener("change", saveForm);
   el.addEventListener("keyup", saveForm);
 });
+
+/* ================== BUTTON GROUP HELPERS ================== */
+function renderButtonGroup(containerId, options, currentValue, onChange) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.value = opt.value;
+    btn.className =
+      "px-3 py-2 rounded-lg border text-sm " +
+      (currentValue === opt.value
+        ? "bg-indigo-600 text-white border-indigo-600"
+        : "bg-white text-gray-700");
+    btn.textContent = opt.label;
+
+    btn.addEventListener("click", () => onChange(opt.value));
+    el.appendChild(btn);
+  });
+}
+
+// Trip type = 2 nút cố định
+function renderTripTypeButtons(currentValue="") {
+  const options = [
+    { value: "ngan", label: "Đi ngắn (≤20km)" },
+    { value: "xa",   label: "Đi xa (>20km)" }
+  ];
+  const onChange = (val) => {
+    document.getElementById("tripType").value = val;
+    localStorage.setItem("tripType", val);
+    renderTripTypeButtons(val); // re-render để cập nhật active
+  };
+  renderButtonGroup("tripTypeGroup", options, currentValue, onChange);
+}
+
+// Car type = đổ động theo tỉnh/huyện
+function renderCarTypeGroup(options=[], currentValue="") {
+  const onChange = (val) => {
+    document.getElementById("carType").value = val;
+    localStorage.setItem("carType", val);
+    renderCarTypeGroup(options, val); // re-render để cập nhật active
+  };
+  renderButtonGroup("carTypeGroup", options, currentValue, onChange);
+}
 
 /* ================== SUBMIT FLOW (CONFIRM MODAL) ================== */
 function collectFormData() {
@@ -358,7 +512,6 @@ function renderConfirmTable(d) {
 document.getElementById("openConfirm").addEventListener("click", () => {
   const d = collectFormData();
 
-  // Frontend validate ngắn gọn
   const status = document.getElementById("submitStatus");
   status.innerText = "";
   if (!/^0\d{9,10}$/.test(d.phone)) {
@@ -370,7 +523,7 @@ document.getElementById("openConfirm").addEventListener("click", () => {
     return;
   }
   if (!d.carType) {
-    status.innerText = "⚠️ Khu vực/loại xe chưa sẵn sàng.";
+    status.innerText = "⚠️ Vui lòng chọn loại xe.";
     return;
   }
 
@@ -423,13 +576,17 @@ async function submitOrderFinal() {
 }
 
 function resetAllForms() {
-  // Giữ lại SĐT cho lần đặt sau (nếu muốn); hoặc xóa sạch:
+  // Giữ lại SĐT cho lần đặt sau; xóa các field khác
   const keep = ["phone"];
   Object.keys(localStorage).forEach(k => {
     if (!keep.includes(k)) localStorage.removeItem(k);
   });
   document.getElementById("orderForm").reset();
-  // reset sticky status
+  // reset hidden + groups
+  document.getElementById("tripType").value = "";
+  document.getElementById("carType").value = "";
+  renderTripTypeButtons("");
+  renderCarTypeGroup([]);
   document.getElementById("submitStatus").innerText = "";
 }
 </script>
