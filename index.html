@@ -366,7 +366,7 @@ function cascadeLoadFromLocalStorage() {
   });
 
   // Trip type buttons
-  const savedTrip = get("tripType");
+   const savedTrip = get("tripType") || "Ngắn";   // mặc định đi ngắn
   renderTripTypeButtons(savedTrip);
   document.getElementById("tripType").value = savedTrip;
 
@@ -614,8 +614,8 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 }
 function renderTripTypeButtons(currentValue="") {
   const options = [
-    { value: "ngan", label: "Đi ngắn (≤20km)" },
-    { value: "xa",   label: "Đi xa (>20km)" }
+    { value: "Ngắn", label: "Đi ngắn (≤20km)" },
+    { value: "Xa",   label: "Đi xa (>20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
@@ -624,14 +624,37 @@ function renderTripTypeButtons(currentValue="") {
   };
   renderButtonGroup("tripTypeGroup", options, currentValue, onChange);
 }
-function renderCarTypeGroup(options=[], currentValue="") {
+function renderCarTypeGroup(options = [], currentValue = "") {
+  // chọn mặc định 4 chỗ nếu có
+  const pickDefault4 = (opts) => {
+    const deaccent = s => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    for (const o of opts) {
+      const t = deaccent((o.label || o.value).toLowerCase());
+      // khớp các kiểu viết: "4 chỗ", "4-cho", "4 cho", "4cho"
+      if (/\b4\s*-?\s*cho\b/.test(t) || t.includes("4 cho") || t.includes("4-cho") || t.includes("4cho")) {
+        return o.value;
+      }
+    }
+    return null;
+  };
+
+  let value = currentValue;
+  if (!value && options.length) {
+    const def = pickDefault4(options) || options[0].value; // fallback: phần tử đầu
+    document.getElementById("carType").value = def;
+    localStorage.setItem("carType", def);
+    value = def;
+  }
+
   const onChange = (val) => {
     document.getElementById("carType").value = val;
     localStorage.setItem("carType", val);
-    renderCarTypeGroup(options, val);
+    renderCarTypeGroup(options, val); // re-render để tô nút active
   };
-  renderButtonGroup("carTypeGroup", options, currentValue, onChange);
+
+  renderButtonGroup("carTypeGroup", options, value, onChange);
 }
+
 </script>
 </body>
 </html>
