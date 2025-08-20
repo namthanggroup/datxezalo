@@ -214,12 +214,18 @@ function buildSearchable(kind) {
       btn.className = "block w-full text-left px-3 py-2 hover:bg-indigo-50";
       btn.textContent = opt.text;
       btn.addEventListener("click", () => {
-        select.placeholder  = opt.value;
+        // set giá trị thật vào <select> ẩn
+        select.value = opt.value;
+      
+        // hiển thị nhãn đã chọn ở placeholder, để user vẫn gõ được ngay
         search.placeholder = opt.text;
         search.value = "";
+      
+        // ẩn list
         list.classList.add("hidden");
-        select.dispatchEvent(new Event("change"));
-        saveForm();
+      
+        // QUAN TRỌNG: bắn change vào <select> (không phải input search)
+        select.dispatchEvent(new Event("change", { bubbles: true }));
       });
       list.appendChild(btn);
     });
