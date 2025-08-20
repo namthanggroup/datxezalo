@@ -115,115 +115,6 @@
       document.getElementById("quantity").value = qty + 1;
     };
 
-    // Load JSON
-    let locationsData = {}, carsData = [];
-    fetch("locations.json").then(r => r.json()).then(data => {
-      locationsData = data;
-      const provinceEl = document.getElementById("province");
-      [...new Set(data.map(d => d.province))].forEach(p => {
-        provinceEl.innerHTML += `<option value="${p}">${p}</option>`;
-      });
-    });
-
-    fetch("cau_hinh_xe.json").then(r => r.json()).then(data => carsData = data);
-
-    // Province → District
-    document.getElementById("province").addEventListener("change", e => {
-      const province = e.target.value;
-      const districtEl = document.getElementById("district");
-      districtEl.innerHTML = "<option value=''>Chọn quận/huyện *</option>";
-      [...new Set(locationsData.filter(d => d.province === province).map(d => d.district))]
-        .forEach(q => districtEl.innerHTML += `<option value="${q}">${q}</option>`);
-      document.getElementById("ward").innerHTML = "<option value=''>Chọn phường/xã *</option>";
-    });
-
-    // District → Ward + Car
-    document.getElementById("district").addEventListener("change", e => {
-      const province = document.getElementById("province").value;
-      const district = e.target.value;
-
-      // ward
-      const wardEl = document.getElementById("ward");
-      wardEl.innerHTML = "<option value=''>Chọn phường/xã *</option>";
-      locationsData.filter(d => d.province === province && d.district === district)
-        .forEach(w => wardEl.innerHTML += `<option value="${w.ward}">${w.ward}</option>`);
-
-      // car
-      const carEl = document.getElementById("carType");
-      carEl.innerHTML = "<option value=''>Chọn loại xe *</option>";
-      carsData.filter(c => c.Tinh_TP === province && c.Quan_Huyen === district)
-        .forEach(c => carEl.innerHTML += `<option value="${c.Loai_Xe}">${c.Loai_Xe}</option>`);
-    });
-
-    // GPS
-		document.getElementById("getLocationBtn").addEventListener("click", () => {
-		  const gpsStatus = document.getElementById("gpsStatus");
-		  const toaDoInput = document.getElementById("toaDo");
-
-		  if (navigator.geolocation) {
-			gpsStatus.textContent = "⏳ Đang lấy vị trí...";
-			navigator.geolocation.getCurrentPosition(
-			  (position) => {
-				const lat = position.coords.latitude.toFixed(6);
-				const lng = position.coords.longitude.toFixed(6);
-				toaDoInput.value = `${lat}, ${lng}`;
-				gpsStatus.textContent = "✅ Lấy tọa độ thành công!";
-				gpsStatus.classList.remove("text-red-500");
-				gpsStatus.classList.add("text-green-600");
-			  },
-			  (error) => {
-				gpsStatus.textContent = "❌ Không thể lấy vị trí. Vui lòng thử lại.";
-				gpsStatus.classList.remove("text-green-600");
-				gpsStatus.classList.add("text-red-500");
-			  }
-			);
-		  } else {
-			gpsStatus.textContent = "⚠️ Trình duyệt không hỗ trợ GPS.";
-			gpsStatus.classList.add("text-red-500");
-		  }
-		});
-
-
-    // Submit
-    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      saveLocalStorage();
-
-      const btn = document.getElementById("submitBtn");
-      document.getElementById("btnText").textContent = "Đang gửi...";
-      document.getElementById("spinner").classList.remove("hidden");
-      btn.disabled = true;
-
-      const payload = {
-        phone: phone.value,
-        province: province.value,
-        district: district.value,
-        ward: ward.value,
-        address: address.value,
-        coords: coords.value,
-        quantity: quantity.value,
-        carType: carType.value,
-        note: note.value
-      };
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "application/json" }
-        });
-        const result = await res.json();
-        alert("✅ Đặt xe thành công!");
-      } catch (err) {
-        alert("❌ Lỗi khi gửi dữ liệu: " + err);
-      } finally {
-        btn.disabled = false;
-        document.getElementById("btnText").textContent = "🚖 Đặt xe ngay";
-        document.getElementById("spinner").classList.add("hidden");
-      }
-    });
-
-    loadLocalStorage();
 	  let locationsData = {};
 let xeData = {};
 
@@ -300,6 +191,77 @@ document.getElementById("quan").addEventListener("change", (e) => {
 
 // Load dữ liệu khi mở trang
 window.onload = loadData;
+
+    // GPS
+		document.getElementById("getLocationBtn").addEventListener("click", () => {
+		  const gpsStatus = document.getElementById("gpsStatus");
+		  const toaDoInput = document.getElementById("toaDo");
+
+		  if (navigator.geolocation) {
+			gpsStatus.textContent = "⏳ Đang lấy vị trí...";
+			navigator.geolocation.getCurrentPosition(
+			  (position) => {
+				const lat = position.coords.latitude.toFixed(6);
+				const lng = position.coords.longitude.toFixed(6);
+				toaDoInput.value = `${lat}, ${lng}`;
+				gpsStatus.textContent = "✅ Lấy tọa độ thành công!";
+				gpsStatus.classList.remove("text-red-500");
+				gpsStatus.classList.add("text-green-600");
+			  },
+			  (error) => {
+				gpsStatus.textContent = "❌ Không thể lấy vị trí. Vui lòng thử lại.";
+				gpsStatus.classList.remove("text-green-600");
+				gpsStatus.classList.add("text-red-500");
+			  }
+			);
+		  } else {
+			gpsStatus.textContent = "⚠️ Trình duyệt không hỗ trợ GPS.";
+			gpsStatus.classList.add("text-red-500");
+		  }
+		});
+
+
+    // Submit
+    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      saveLocalStorage();
+
+      const btn = document.getElementById("submitBtn");
+      document.getElementById("btnText").textContent = "Đang gửi...";
+      document.getElementById("spinner").classList.remove("hidden");
+      btn.disabled = true;
+
+      const payload = {
+        phone: phone.value,
+        province: province.value,
+        district: district.value,
+        ward: ward.value,
+        address: address.value,
+        coords: coords.value,
+        quantity: quantity.value,
+        carType: carType.value,
+        note: note.value
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+        const result = await res.json();
+        alert("✅ Đặt xe thành công!");
+      } catch (err) {
+        alert("❌ Lỗi khi gửi dữ liệu: " + err);
+      } finally {
+        btn.disabled = false;
+        document.getElementById("btnText").textContent = "🚖 Đặt xe ngay";
+        document.getElementById("spinner").classList.add("hidden");
+      }
+    });
+
+    loadLocalStorage();
+
 
   </script>
 </body>
