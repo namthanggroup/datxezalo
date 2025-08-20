@@ -417,8 +417,8 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 // Trip type = 2 nút cố định
 function renderTripTypeButtons(currentValue="") {
   const options = [
-    { value: "ngan", label: "Đi ngắn (≤20km)" },
-    { value: "xa",   label: "Đi xa (>20km)" }
+    { value: "Ngắn", label: "Đi ngắn (≤20km)" },
+    { value: "Xa",   label: "Đi xa (>20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
