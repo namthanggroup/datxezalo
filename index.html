@@ -156,7 +156,29 @@
         });
       }
     });
+let cauHinhXe = [];
+fetch("cau_hinh_xe.json")
+  .then(res => res.json())
+  .then(data => {
+    cauHinhXe = data;
+  });
 
+// Khi thay đổi Quận/Huyện => load loại xe
+document.getElementById("quanHuyen").addEventListener("change", () => {
+  const tinh = document.getElementById("tinhThanh").value;
+  const quan = document.getElementById("quanHuyen").value;
+  const loaiXeSelect = document.getElementById("loaiXe");
+  loaiXeSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+
+  if (tinh && quan) {
+    const options = cauHinhXe
+      .filter(item => item.Tinh_TP === tinh && item.Quan_Huyen === quan)
+      .map(item => `<option value="${item.Loai_Xe}">${item.Loai_Xe}</option>`)
+      .join("");
+
+    loaiXeSelect.innerHTML += options || '<option value="">(Không có loại xe khả dụng)</option>';
+  }
+});
     // Cộng trừ số lượng xe
     function changeSoLuong(val) {
       let input = document.getElementById("soLuong");
