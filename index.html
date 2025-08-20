@@ -214,8 +214,9 @@ function buildSearchable(kind) {
       btn.className = "block w-full text-left px-3 py-2 hover:bg-indigo-50";
       btn.textContent = opt.text;
       btn.addEventListener("click", () => {
-        select.value = opt.value;
-        search.value = opt.text;
+        select.placeholder  = opt.value;
+        search.placeholder = opt.text;
+        search.value = "";
         list.classList.add("hidden");
         select.dispatchEvent(new Event("change"));
         saveForm();
@@ -233,15 +234,17 @@ function buildSearchable(kind) {
 
   // Sync input display from current selected
   const selOpt = select.options[select.selectedIndex];
-  search.value = selOpt ? selOpt.text : "";
+  search.placeholder = selOpt ? selOpt.text : "Gõ để tìm...";
+  search.value = "";
   rebuildList();
 
   // Expose a helper to refresh after options change
-  buildSearchable[`refresh_${kind}`] = () => {
-    const selOpt2 = select.options[select.selectedIndex];
-    search.value = selOpt2 ? selOpt2.text : "";
-    rebuildList();
-  };
+ buildSearchable[`refresh_${kind}`] = () => {
+   const selOpt2 = select.options[select.selectedIndex];
+   search.placeholder = selOpt2 ? selOpt2.text : "Gõ để tìm...";
+   search.value = "";
+   rebuildList();
+ };
 }
 
 /* ================== CASCADE DROPDOWNS ================== */
