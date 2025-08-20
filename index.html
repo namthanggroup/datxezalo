@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đặt xe Taxi điện Nam Thắng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-md mx-auto">
+    <header class="p-4 sticky top-0 bg-white/90 backdrop-blur z-10 border-b">
+      <h1 class="text-xl font-bold text-center text-indigo-600">Đặt xe Taxi điện Nam Thắng</h1>
+    </header>
+
+    <form id="orderForm" class="p-4 space-y-5">
+      <!-- Liên hệ -->
+      <section class="bg-white rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Thông tin liên hệ</h2>
+        <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0\\d{9,10}$"
+               placeholder="Số điện thoại (VD: 0912345678)"
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+      </section>
+
+      <!-- Điểm đón -->
+      <section class="bg-white rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đón</h2>
+        <div class="grid grid-cols-1 gap-2">
+          <select id="province" required class="w-full p-3 border rounded-lg">
+            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+          </select>
+          <div class="grid grid-cols-2 gap-2">
+            <select id="district" required class="p-3 border rounded-lg">
+              <option value="">-- Quận/Huyện --</option>
+            </select>
+            <select id="ward" required class="p-3 border rounded-lg">
+              <option value="">-- Phường/Xã --</option>
+            </select>
+          </div>
+          <input id="address" type="text" required placeholder="Địa chỉ chi tiết"
+                 class="w-full p-3 border rounded-lg">
+          <button type="button" id="getLocation"
+                  class="w-full bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg">
+            📍 Lấy vị trí GPS & phân giải tên (miễn phí)
+          </button>
+          <p id="gpsStatus" class="text-sm text-gray-500"></p>
+        </div>
+      </section>
+
+      <!-- Điểm đến -->
+      <section class="bg-white rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Điểm đến</h2>
+        <input id="destination" type="text" placeholder="Nhập điểm đến (đường, số nhà...)"
+               class="w-full p-3 border rounded-lg">
+      </section>
+
+      <!-- Hành trình & xe -->
+      <section class="bg-white rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Hành trình & xe</h2>
+        <div class="flex items-center gap-2 mb-3">
+          <label class="text-gray-600">Số khách:</label>
+          <button type="button" id="decreaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">-</button>
+          <input id="quantity" type="number" min="1" value="1" required class="w-16 text-center border rounded-lg">
+          <button type="button" id="increaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">+</button>
+        </div>
+
+        <select id="tripType" required class="w-full p-3 border rounded-lg mb-3">
+          <option value="">-- Loại cuốc --</option>
+          <option value="ngan">Chuyến đi ngắn (&le; 20km)</option>
+          <option value="xa">Chuyến đi xa (&gt; 20km)</option>
+        </select>
+
+        <select id="carType" required class="w-full p-3 border rounded-lg">
+          <option value="">-- Chọn loại xe --</option>
+        </select>
+      </section>
+
+      <!-- Ghi chú -->
+      <section class="bg-white rounded-xl p-4 shadow-sm">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">Ghi chú</h2>
+        <textarea id="note" rows="3" placeholder="Ví dụ: Đón lúc 8h, có hành lý..."
+                  class="w-full p-3 border rounded-lg"></textarea>
+      </section>
+
+      <!-- Submit sticky -->
+      <div class="h-24"></div>
+      <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3">
+        <button type="button" id="openConfirm" 
+                class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+          🚕 Đặt cuốc ngay
+        </button>
+        <p id="submitStatus" class="text-center text-sm mt-2"></p>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal xác nhận -->
+  <div id="confirmModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
+    <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
+      <h3 class="text-lg font-semibold mb-3">Xác nhận đặt chuyến</h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <tbody id="confirmTable" class="align-top"></tbody>
+        </table>
+      </div>
+      <div class="mt-4 flex gap-2">
+        <button id="cancelConfirm" class="flex-1 py-2 rounded-lg border">Không</button>
+        <button id="finalSubmit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white font-semibold">✅ Xác nhận đặt xe</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal thành công -->
+  <div id="successModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
+    <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
+      <h3 class="text-lg font-semibold mb-3">Đặt chuyến thành công</h3>
+      <p id="successMsg" class="text-sm text-gray-700 whitespace-pre-line"></p>
+      <div class="mt-4">
+        <button id="closeSuccess" class="w-full py-2 rounded-lg bg-indigo-600 text-white font-semibold">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ================== CONFIG ================== */
+const scriptURL = "https://script.google.com/macros/s/AKfycbx8EVqG37czQ9ACGPHKDrOD6LUxmVXOLBJxdyKdwvb8YA6EIgfL-c6l0lUgEzHkJFeHLg/exec"; // WebApp URL
+let locationsData = {};
+let carConfigData = {};
+
+/* Tổng đài theo tỉnh */
+function getCallCenterPhone(province) {
+  const phoneNumbers = {
+    'An Giang': '02973 56 56 56',
+    'Cà Mau': '02903 56 56 56',
+    'Hậu Giang': '02973 95 95 95',
+    'Kiên Giang': '02973 69 69 69',
+    'Phú Quốc': '02973 75 75 75',
+    'Bạc Liêu': '02913 75 75 75',
+    'Sóc Trăng': '0299 123 4567', // chuẩn hóa 1 số cho Sóc Trăng
+    'Vĩnh Long': '02913 59 59 59'
+  };
+  return phoneNumbers[province] || '0938 267 888';
+}
+
+/* ================== LOAD DATA ================== */
+async function loadData() {
+  try {
+    const locRes = await fetch("locations.json");
+    locationsData = await locRes.json();
+
+    const carRes = await fetch("cau_hinh_xe.json");
+    carConfigData = await carRes.json();
+
+    const provinceSelect = document.getElementById("province");
+    provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+    Object.keys(locationsData).forEach(tinh => {
+      provinceSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
+    });
+
+    cascadeLoadFromLocalStorage();
+  } catch (e) {
+    document.getElementById("submitStatus").innerText = "⚠️ Không tải được dữ liệu cấu hình.";
+    console.error(e);
+  }
+}
+loadData();
+
+/* ================== DROPDOWNS ================== */
+document.getElementById("province").addEventListener("change", e => {
+  const province = e.target.value;
+  const districts = Object.keys(locationsData[province] || {});
+  const districtSelect = document.getElementById("district");
+  districtSelect.innerHTML = '<option value="">-- Quận/Huyện --</option>';
+  document.getElementById("ward").innerHTML = '<option value="">-- Phường/Xã --</option>';
+  districts.forEach(qh => {
+    districtSelect.innerHTML += `<option value="${qh}">${qh}</option>`;
+  });
+
+  // Reset car types khi đổi tỉnh
+  const carSelect = document.getElementById("carType");
+  carSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+});
+
+document.getElementById("district").addEventListener("change", e => {
+  const province = document.getElementById("province").value;
+  const district = e.target.value;
+  const wards = locationsData[province]?.[district] || [];
+  const wardSelect = document.getElementById("ward");
+  wardSelect.innerHTML = '<option value="">-- Phường/Xã --</option>';
+  wards.forEach(px => {
+    wardSelect.innerHTML += `<option value="${px}">${px}</option>`;
+  });
+
+  // loại xe theo tỉnh + huyện
+  const carTypes = carConfigData[province]?.[district] || [];
+  const carSelect = document.getElementById("carType");
+  carSelect.innerHTML = '<option value="">-- Chọn loại xe --</option>';
+  carTypes.forEach(car => {
+    carSelect.innerHTML += `<option value="${car}">${car}</option>`;
+  });
+});
+
+/* ================== QTY ================== */
+document.getElementById("increaseQty").onclick = () => {
+  let val = parseInt(document.getElementById("quantity").value) || 1;
+  document.getElementById("quantity").value = val + 1;
+};
+document.getElementById("decreaseQty").onclick = () => {
+  let val = parseInt(document.getElementById("quantity").value) || 1;
+  if (val > 1) document.getElementById("quantity").value = val - 1;
+};
+
+/* ================== GPS + REVERSE (FREE) ================== */
+async function reverseGeocode(lat, lon) {
+  // Nominatim miễn phí (tôn trọng rate limit). Thay email của bạn cho đúng policy.
+  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&accept-language=vi&email=youremail@example.com`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Reverse geocode failed");
+  return res.json();
+}
+
+document.getElementById("getLocation").onclick = () => {
+  const status = document.getElementById("gpsStatus");
+  if (!navigator.geolocation) {
+    status.innerText = "Trình duyệt không hỗ trợ GPS.";
+    return;
+  }
+  status.innerText = "Đang lấy vị trí...";
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try {
+      const lat = pos.coords.latitude, lon = pos.coords.longitude;
+      localStorage.setItem("gps", `${lat},${lon}`);
+
+      const info = await reverseGeocode(lat, lon);
+      const nice = info.display_name || `${lat}, ${lon}`;
+      status.innerText = `📍 ${nice}`;
+
+      // Ưu tiên GPS: nếu user chưa nhập địa chỉ đón thì gợi ý điền
+      const addrInput = document.getElementById("address");
+      if (addrInput && !addrInput.value.trim()) {
+        addrInput.value = nice;
+        saveForm();
+      }
+
+      // Theo yêu cầu: vẫn để user tự chọn tỉnh — KHÔNG tự động set province.
+      // (Nếu cần auto-gợi ý tỉnh: có thể show hint ở status, không auto select)
+      // Ví dụ hint:
+      // const provinceHint = info.address?.state || info.address?.province || "";
+      // if (!document.getElementById("province").value && provinceHint) {
+      //   status.innerText
