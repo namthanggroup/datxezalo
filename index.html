@@ -83,7 +83,7 @@
         <h2 class="text-base font-semibold text-gray-700 mb-3">Hành trình & xe</h2>
 
         <div class="flex items-center gap-2 mb-3">
-          <label class="text-gray-600">Số khách:</label>
+          <label class="text-gray-600">Số lượng xe:</label>
           <button type="button" id="decreaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">-</button>
           <input id="quantity" type="number" min="1" value="1" required class="w-16 text-center border rounded-lg">
           <button type="button" id="increaseQty" class="px-3 py-2 bg-gray-100 rounded-lg">+</button>
@@ -493,7 +493,7 @@ function renderConfirmTable(d) {
     ["Địa chỉ đón", d.address],
     ["Điểm đến", d.destination || "(chưa nhập)"],
     ["Loại cuốc", d.tripType === "xa" ? "Đi xa (>20km)" : "Đi ngắn (≤20km)"],
-    ["Số khách", d.quantity],
+    ["Số lượng xe", d.quantity],
     ["Loại xe", d.carType],
     ["Ghi chú", d.note || "(không)"]
   ];
