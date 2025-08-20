@@ -224,6 +224,83 @@
     });
 
     loadLocalStorage();
+	  let locationsData = {};
+let xeData = {};
+
+// Load dữ liệu JSON
+async function loadData() {
+  try {
+    const res1 = await fetch("locations.json");
+    locationsData = await res1.json();
+
+    const res2 = await fetch("cau_hinh_xe.json");
+    xeData = await res2.json();
+
+    // Đổ tỉnh thành ngay khi load
+    const tinhSelect = document.getElementById("tinh");
+    tinhSelect.innerHTML = `<option value="">-- Chọn Tỉnh/Thành --</option>`;
+    Object.keys(locationsData).forEach(tinh => {
+      const opt = document.createElement("option");
+      opt.value = tinh;
+      opt.textContent = tinh;
+      tinhSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Lỗi load JSON:", err);
+  }
+}
+
+document.getElementById("tinh").addEventListener("change", (e) => {
+  const tinh = e.target.value;
+  const huyenSelect = document.getElementById("quan");
+  const xaSelect = document.getElementById("phuong");
+  const xeSelect = document.getElementById("loaiXe");
+
+  huyenSelect.innerHTML = `<option value="">-- Chọn Quận/Huyện --</option>`;
+  xaSelect.innerHTML = `<option value="">-- Chọn Phường/Xã --</option>`;
+  xeSelect.innerHTML = `<option value="">-- Chọn Loại Xe --</option>`;
+
+  if (tinh && locationsData[tinh]) {
+    Object.keys(locationsData[tinh]).forEach(huyen => {
+      const opt = document.createElement("option");
+      opt.value = huyen;
+      opt.textContent = huyen;
+      huyenSelect.appendChild(opt);
+    });
+  }
+});
+
+document.getElementById("quan").addEventListener("change", (e) => {
+  const tinh = document.getElementById("tinh").value;
+  const huyen = e.target.value;
+  const xaSelect = document.getElementById("phuong");
+  const xeSelect = document.getElementById("loaiXe");
+
+  xaSelect.innerHTML = `<option value="">-- Chọn Phường/Xã --</option>`;
+  xeSelect.innerHTML = `<option value="">-- Chọn Loại Xe --</option>`;
+
+  if (tinh && huyen && locationsData[tinh][huyen]) {
+    locationsData[tinh][huyen].forEach(xa => {
+      const opt = document.createElement("option");
+      opt.value = xa;
+      opt.textContent = xa;
+      xaSelect.appendChild(opt);
+    });
+  }
+
+  if (huyen && xeData[huyen]) {
+    xeData[huyen].forEach(xe => {
+      const opt = document.createElement("option");
+      opt.value = xe;
+      opt.textContent = xe;
+      xeSelect.appendChild(opt);
+    });
+  }
+});
+
+// Load dữ liệu khi mở trang
+window.onload = loadData;
+
   </script>
 </body>
 </html>
