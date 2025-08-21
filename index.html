@@ -452,7 +452,7 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 function renderTripTypeButtons(currentValue="") {
   const options = [
     { value: "Ngắn", label: "Đi ngắn (≤20km)" },
-    { value: "Xa",   label: "Đi xa (>20km)" }
+    { value: "Xa",   label: "Đi xa (>= 20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
@@ -517,7 +517,7 @@ function renderConfirmTable(d) {
     ["Phường/Xã", d.ward],
     ["Địa chỉ đón", d.address],
     ["Điểm đến", d.destination || "(chưa nhập)"],
-    ["Loại cuốc", d.tripType === "xa" ? "Đi xa (>20km)" : "Đi ngắn (≤20km)"],
+    ["Loại cuốc", d.tripType === "Xa" ? "Đi xa (>= 20km)" : "Đi ngắn (<20km)"],
     ["Số lượng xe", d.quantity],
     ["Loại xe", d.carType],
     ["Ghi chú", d.note || "(không)"]
