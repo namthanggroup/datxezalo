@@ -1,3 +1,21 @@
+
+# 🚖 Đặt Xe Taxi Điện Nam Thắng
+
+Form web **đặt cuốc nhanh** tối ưu mobile. Frontend **HTML + Tailwind**, backend **Google Apps Script** ghi vào **Google Sheet**.
+
+## 💡 Tính năng
+- Tiêu đề có **icon xe điện** xanh nón chuối + hiệu ứng nhẹ.
+- **CTA tải app** hiển thị trong popup thành công: `taxinamthang.vn/taiapp` (link click được, hiệu ứng nổi bật).
+- **Searchable select** cho Tỉnh/Quận/Phường (gõ để lọc, chọn → cascade).
+- **Lấy GPS** + **reverse geocode** Nominatim (miễn phí) để gợi ý địa chỉ.
+- **Loại cuốc** & **Loại xe** dạng **nút bấm**; mặc định: _Đi ngắn_ + _4 chỗ_ (nếu có).
+- **Popup xác nhận** trước khi gửi; **popup thành công** kèm **số tổng đài theo Tỉnh**.
+- **LocalStorage** giữ SĐT, địa chỉ (và các trường cấu hình) để đặt lại nhanh.
+- Né lỗi CORS bằng `fetch(..., { mode: "no-cors" })`.
+
+---
+
+---------------------
 equenceDiagram
 autonumber
 actor KH as Khách hàng
