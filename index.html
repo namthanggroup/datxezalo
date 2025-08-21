@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taxi điện Nam Thắng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-md mx-auto">
 <header class="p-4 sticky top-0 bg-white/90 backdrop-blur z-10 border-b">
   <div class="flex items-center gap-3">
     <!-- Icon xe điện xanh nón chuối -->
@@ -21,28 +29,13 @@
       <path d="M34 8l-8 14h6l-2 10 10-16h-6l2-8z" fill="#84cc16"/>
     </svg>
 
-    <h1 class="text-2xl sm:text-3xl font-extrabold leading-tight">
+    <h1 class="text-2xl sm:text-2xl font-extrabold leading-tight">
       <span class="bg-gradient-to-r from-lime-400 via-emerald-500 to-lime-500 bg-clip-text text-transparent shimmer-text">
         Đặt Xe Taxi Điện Nam Thắng
       </span>
     </h1>
   </div>
-	<style>
-  @keyframes neonPulse{
-    0%,100%{ filter: drop-shadow(0 0 0 rgba(163,230,53,0)); }
-    50%{ filter: drop-shadow(0 0 14px rgba(163,230,53,.9)); }
-  }
-  .neon-icon{ animation: neonPulse 2.2s ease-in-out infinite; }
-  @keyframes shimmer{
-    0%{ background-position: 0% 50%; }
-    100%{ background-position: 100% 50%; }
-  }
-  .shimmer-text{ background-size: 200% 200%; animation: shimmer 3s linear infinite; }
-  .cta-pop{ animation: neonPulse 2.2s ease-in-out infinite; }
-</style>
-
 </header>
-
 
     <form id="orderForm" class="p-4 space-y-5">
       <!-- Liên hệ -->
@@ -591,7 +584,7 @@ async function submitOrderFinal() {
 	const successMessage =
 	  `💐 Đã ghi nhận thông tin đặt xe của Quý khách!<br><br>` +
 	  `Tổng đài sẽ kiểm tra và điều xe trong thời gian sớm nhất.<br><br>` +
-	  `📲 Tải app đặt xe NHANH CHÓNG - TIỆN LỢI tại đây: ` +
+	  `📲 Tải app tại: ` +
 	  `<a href="https://taxinamthang.vn/taiapp" target="_blank" rel="noopener" ` +
 	  `class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-lime-100 text-lime-700 font-semibold underline decoration-wavy cta-pop hover:scale-[1.03] transition">` +
 	  `taxinamthang.vn/taiapp</a>` +
