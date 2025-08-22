@@ -274,16 +274,16 @@ function buildSearchable(kind) {
   });
 
   // Sync input display from current selected
-  const selOpt = select.options[select.selectedIndex];
-	search.value = selOpt ? selOpt.text : "";
-	search.placeholder = "Gõ để tìm...";
+ const selOpt = select.options[select.selectedIndex];
+ search.value = (selOpt && selOpt.value) ? selOpt.text : ""; // chỉ hiển thị khi có value
+ search.placeholder = "Gõ để tìm...";
   rebuildList();
 
   // Expose a helper to refresh after options change
  buildSearchable[`refresh_${kind}`] = () => {
-   const selOpt2 = select.options[select.selectedIndex];
-	search.value = selOpt2 ? selOpt2.text : "";
-	search.placeholder = "Gõ để tìm...";
+  const selOpt2 = select.options[select.selectedIndex];
+  search.value = (selOpt2 && selOpt2.value) ? selOpt2.text : "";
+  search.placeholder = "Gõ để tìm...";
    rebuildList();
  };
 }
