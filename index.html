@@ -320,7 +320,7 @@ document.getElementById("district").addEventListener("change", e => {
 
   // Ward options
   const wardSelect = document.getElementById("ward");
-  wardSelect.innerHTML = '<option value="">-- Phường/Xã --</option>';
+  wardSelect.innerHTML = '<option value=""></option>';
   const wards = locationsData[province]?.[district] || [];
   wards.forEach(px => {
     wardSelect.innerHTML += `<option value="${px}">${px}</option>`;
