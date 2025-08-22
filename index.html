@@ -62,7 +62,7 @@
         <div id="provinceWrapper" class="relative">
           <input id="provinceSearch" type="text" placeholder="Tìm Tỉnh/Thành phố..."
                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-		 <div id="provinceList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+          <div id="provinceList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
           <select id="province" class="hidden">
             <option value=""></option>
           </select>
@@ -75,7 +75,7 @@
             <div id="districtWrapper" class="relative">
               <input id="districtSearch" type="text" placeholder="Tìm Quận/Huyện..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-		 <div id="districtList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+              <div id="districtList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
               <select id="district" class="hidden">
                 <option value=""></option>
               </select>
@@ -86,7 +86,7 @@
             <div id="wardWrapper" class="relative">
               <input id="wardSearch" type="text" placeholder="Tìm Phường/Xã..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-		 <div id="wardList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+              <div id="wardList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
               <select id="ward" class="hidden">
                 <option value=""></option>
               </select>
@@ -247,51 +247,43 @@ function buildSearchable(kind) {
       btn.type = "button";
       btn.className = "block w-full text-left px-3 py-2 hover:bg-indigo-50";
       btn.textContent = opt.text;
-		btn.addEventListener("click", () => {
-			 btn.addEventListener("mousedown", (ev) => {
-		   ev.preventDefault();  // tránh blur input trước khi xử lý
-		  // set giá trị thật vào <select> ẩn
-		  select.value = opt.value;
-	
-		 // hiển thị NHƯ GIÁ TRỊ (chữ đen), và gắn cờ đã chọn
-		 search.value = opt.text;
-		 search.placeholder = "Gõ để tìm...";
-		 search.dataset.chosen = "1";      // <— cờ
-		
-		  // ẩn list
-		  list.classList.add("hidden");
-		
-		  // bắn change vào <select>
-		  select.dispatchEvent(new Event("change", { bubbles: true }));
-		});
-
+      btn.addEventListener("click", () => {
+        // set giá trị thật vào <select> ẩn
+        select.value = opt.value;
+      
+        // hiển thị nhãn đã chọn ở placeholder, để user vẫn gõ được ngay
+		search.value = opt.text;
+		search.placeholder = "Gõ để tìm...";
+      
+        // ẩn list
+		  
+        list.classList.add("hidden");
+      
+        // QUAN TRỌNG: bắn change vào <select> (không phải input search)
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      list.appendChild(btn);
+    });
   }
 
   search.addEventListener("focus", () => { rebuildList();list.classList.remove("hidden");setTimeout(() => { try { search.select(); } catch(e){} }, 0);  });
   search.addEventListener("input", () => { rebuildList(); list.classList.remove("hidden"); });
-	   const openList = () => { rebuildList(); list.classList.remove("hidden"); };
- search.addEventListener("focus", () => {
-   openList();
-   setTimeout(() => { try { search.select(); } catch(e){} }, 0);
- });
- search.addEventListener("click", openList);
- search.addEventListener("mousedown", openList
   document.addEventListener("click", (e) => {
     const wrapper = document.getElementById(`${kind}Wrapper`);
     if (!wrapper.contains(e.target)) list.classList.add("hidden");
   });
 
   // Sync input display from current selected
- const selOpt = select.options[select.selectedIndex];
- search.value = (selOpt && selOpt.value) ? selOpt.text : ""; // chỉ hiển thị khi có value
- search.placeholder = "Gõ để tìm...";
+  const selOpt = select.options[select.selectedIndex];
+	search.value = selOpt ? selOpt.text : "";
+	search.placeholder = "Gõ để tìm...";
   rebuildList();
 
   // Expose a helper to refresh after options change
  buildSearchable[`refresh_${kind}`] = () => {
-  const selOpt2 = select.options[select.selectedIndex];
-  search.value = (selOpt2 && selOpt2.value) ? selOpt2.text : "";
-  search.placeholder = "Gõ để tìm...";
+   const selOpt2 = select.options[select.selectedIndex];
+	search.value = selOpt2 ? selOpt2.text : "";
+	search.placeholder = "Gõ để tìm...";
    rebuildList();
  };
 }
