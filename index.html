@@ -62,7 +62,7 @@
         <div id="provinceWrapper" class="relative">
           <input id="provinceSearch" type="text" placeholder="Tìm Tỉnh/Thành phố..."
                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-          <div id="provinceList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+          <div id="provinceList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
           <select id="province" class="hidden">
             <option value=""></option>
           </select>
@@ -75,7 +75,7 @@
             <div id="districtWrapper" class="relative">
               <input id="districtSearch" type="text" placeholder="Tìm Quận/Huyện..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-              <div id="districtList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+              <div id="districtList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
               <select id="district" class="hidden">
                 <option value=""></option>
               </select>
@@ -86,7 +86,7 @@
             <div id="wardWrapper" class="relative">
               <input id="wardSearch" type="text" placeholder="Tìm Phường/Xã..."
                      class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-              <div id="wardList" class="absolute z-20 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
+              <div id="wardList" class="absolute left-0 top-full mt-1 z-50 bg-white border rounded-lg w-full max-h-60 overflow-auto shadow-lg hidden"></div>
               <select id="ward" class="hidden">
                 <option value=""></option>
               </select>
@@ -190,7 +190,7 @@ function getCallCenterPhone(province) {
     'An Giang': '02973 56 56 56',
     'Cà Mau': '02903 56 56 56',
     'Hậu Giang': '02973 95 95 95',
-    'Kiên Giang': '02973 69 69 69',
+    'Kiên Giang': '02973 69 69 69 / Hà Tiên:*5656',
     'Phú Quốc': '02973 75 75 75',
     'Bạc Liêu': '02913 75 75 75',
     'Sóc Trăng': '0299 123 4567',
@@ -226,27 +226,32 @@ async function loadData() {
     console.error(e);
   }
 }
-// Prefill từ query: ?zaloname=Truong&phone=0916510566
+// ===== Prefill từ query: ?zaloname=Truong&phone=0916510566 =====
 (function prefillFromQuery() {
-  const qs = new URLSearchParams(window.location.search);
+  const qs = new URLSearchParams(location.search);
 
-  // zaloname
-  if (qs.has('zaloname')) {
-    const name = qs.get('zaloname') || '';
-    localStorage.setItem('zaloname', name);
-    const el = document.getElementById('zaloname');
-    if (el) el.value = name;
-  }
+  // helper
+  const setField = (id, val) => {
+    if (!val) return;
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+    try { localStorage.setItem(id, val); } catch(e) {}
+  };
 
-  // phone: chỉ lấy số, đảm bảo có '0' đầu
-  if (qs.has('phone')) {
-    const raw = (qs.get('phone') || '').replace(/[^0-9]/g, '');
-    const normalized = raw.startsWith('0') ? raw : ('0' + raw);
-    localStorage.setItem('phone', normalized);
-    const ph = document.getElementById('phone');
-    if (ph) ph.value = normalized;
+  // name
+  const name = qs.get('zaloname');
+  if (name) setField('zaloname', decodeURIComponent(name));
+
+  // phone: chuẩn hoá về dạng 0xxxxxxxxx
+  let p = qs.get('phone');
+  if (p) {
+    p = String(p).replace(/[^0-9]/g, '');
+    if (p.startsWith('84') && p.length >= 11) p = '0' + p.slice(2);
+    if (!p.startsWith('0')) p = '0' + p; // phòng TH thiếu số 0 đầu
+    setField('phone', p);
   }
 })();
+
 
 	
 loadData();
@@ -292,6 +297,8 @@ function buildSearchable(kind) {
 
   search.addEventListener("focus", () => { rebuildList();list.classList.remove("hidden");setTimeout(() => { try { search.select(); } catch(e){} }, 0);  });
   search.addEventListener("input", () => { rebuildList(); list.classList.remove("hidden"); });
+	 search.addEventListener("click", openList);
+	search.addEventListener("mousedown", openList); // fix Safari mobile
   document.addEventListener("click", (e) => {
     const wrapper = document.getElementById(`${kind}Wrapper`);
     if (!wrapper.contains(e.target)) list.classList.add("hidden");
