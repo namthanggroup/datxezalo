@@ -44,12 +44,14 @@
       <section class="bg-white rounded-xl p-4 shadow-sm">
 	  <h2 class="text-base font-semibold text-gray-700 mb-3">Tên người đặt (*)</h2>
         <input id="zaloname" name="zaloname" type="text" required 
-               placeholder="Tên người đặt"
+               placeholder="Tên/ID người đặt"
+				value="<?!= zaloname ?>" 
                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
 			   
         <h2 class="text-base font-semibold text-gray-700 mb-3">Điện thoại liên hệ (*)</h2>
         <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0\\d{9,10}$"
                placeholder="Số điện thoại (VD: 0912345678)"
+				value="<?!= phone ?>"
                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
       </section>
 
