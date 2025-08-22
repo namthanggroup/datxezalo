@@ -247,23 +247,22 @@ function buildSearchable(kind) {
       btn.type = "button";
       btn.className = "block w-full text-left px-3 py-2 hover:bg-indigo-50";
       btn.textContent = opt.text;
-      btn.addEventListener("click", () => {
-        // set giá trị thật vào <select> ẩn
-        select.value = opt.value;
-      
-        // hiển thị nhãn đã chọn ở placeholder, để user vẫn gõ được ngay
-		//search.value = opt.text;
-		search.placeholder = "Gõ để tìm...";
-      
-        // ẩn list
-		  
-        list.classList.add("hidden");
-      
-        // QUAN TRỌNG: bắn change vào <select> (không phải input search)
-        select.dispatchEvent(new Event("change", { bubbles: true }));
-      });
-      list.appendChild(btn);
-    });
+		btn.addEventListener("click", () => {
+		  // set giá trị thật vào <select> ẩn
+		  select.value = opt.value;
+	
+		 // hiển thị NHƯ GIÁ TRỊ (chữ đen), và gắn cờ đã chọn
+		 search.value = opt.text;
+		 search.placeholder = "Gõ để tìm...";
+		 search.dataset.chosen = "1";      // <— cờ
+		
+		  // ẩn list
+		  list.classList.add("hidden");
+		
+		  // bắn change vào <select>
+		  select.dispatchEvent(new Event("change", { bubbles: true }));
+		});
+
   }
 
   search.addEventListener("focus", () => { rebuildList();list.classList.remove("hidden");setTimeout(() => { try { search.select(); } catch(e){} }, 0);  });
