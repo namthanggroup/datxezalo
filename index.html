@@ -46,13 +46,13 @@
         <input id="zaloname" name="zaloname" type="text" required 
                placeholder="Tên/ID người đặt"
 				value="<?!= zaloname ?>" 
-               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"/>
 			   
         <h2 class="text-base font-semibold text-gray-700 mb-3">Điện thoại liên hệ (*)</h2>
-        <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0\\d{9,10}$"
+        <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0[0-9]{9,10}$"
                placeholder="Số điện thoại (VD: 0912345678)"
 				value="<?!= phone ?>"
-               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"/>
       </section>
 
       <!-- Điểm đón -->
@@ -448,7 +448,7 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
     btn.className =
       "px-3 py-2 rounded-lg border text-sm " +
       (currentValue === opt.value
-        ? "bg-indigo-600 text-white border-indigo-600"
+        ? "bg-lime-600 text-white border-lime-600"
         : "bg-white text-gray-700");
     btn.textContent = opt.label;
 
@@ -575,6 +575,7 @@ async function submitOrderFinal() {
     // LƯU Ý: bỏ headers Content-Type để tránh preflight CORS
     const res = await fetch(scriptURL, {
       method: "POST",
+		mode: "no-cors",
       body: JSON.stringify(formData)
     });
 
@@ -647,7 +648,7 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
     btn.className =
       "px-3 py-2 rounded-lg border text-sm " +
       (currentValue === opt.value
-        ? "bg-indigo-600 text-white border-indigo-600"
+        ? "bg-lime-600 text-white border-lime-600"
         : "bg-white text-gray-700");
     btn.textContent = opt.label;
     btn.addEventListener("click", () => onChange(opt.value));
