@@ -210,7 +210,7 @@ async function loadData() {
 
     // Province select options
     const provinceSelect = document.getElementById("province");
-    provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
+    provinceSelect.innerHTML = '<option value=""></option>';
     Object.keys(locationsData).forEach(tinh => {
       provinceSelect.innerHTML += `<option value="${tinh}">${tinh}</option>`;
     });
@@ -294,8 +294,8 @@ document.getElementById("province").addEventListener("change", e => {
 
   // District options
   const districtSelect = document.getElementById("district");
-  districtSelect.innerHTML = '<option value="">-- Quận/Huyện --</option>';
-  document.getElementById("ward").innerHTML = '<option value="">-- Phường/Xã --</option>';
+  districtSelect.innerHTML = '<option value=""></option>';
+  document.getElementById("ward").innerHTML = '<option value=""></option>';
 
   const districts = Object.keys(locationsData[province] || {});
   districts.forEach(qh => {
