@@ -45,14 +45,12 @@
 	  <h2 class="text-base font-semibold text-gray-700 mb-3">Tên người đặt (*)</h2>
         <input id="zaloname" name="zaloname" type="text" required 
                placeholder="Tên/ID người đặt"
-				value="<?!= zaloname ?>" 
-               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"/>
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
 			   
         <h2 class="text-base font-semibold text-gray-700 mb-3">Điện thoại liên hệ (*)</h2>
         <input id="phone" name="phone" type="tel" required inputmode="numeric" pattern="^0[0-9]{9,10}$"
                placeholder="Số điện thoại (VD: 0912345678)"
-				value="<?!= phone ?>"
-               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"/>
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500">
       </section>
 
       <!-- Điểm đón -->
@@ -220,11 +218,37 @@ async function loadData() {
     // Init searchable for current options
     buildSearchable("province");
     cascadeLoadFromLocalStorage();
+	      // 👉 Focus ô Tỉnh nếu đã có phone (từ query/localStorage)
+    if (document.getElementById('phone')?.value) {
+      document.getElementById('provinceSearch')?.focus();
   } catch (e) {
     document.getElementById("submitStatus").innerText = "⚠️ Không tải được dữ liệu cấu hình.";
     console.error(e);
   }
 }
+// Prefill từ query: ?zaloname=Truong&phone=0916510566
+(function prefillFromQuery() {
+  const qs = new URLSearchParams(window.location.search);
+
+  // zaloname
+  if (qs.has('zaloname')) {
+    const name = qs.get('zaloname') || '';
+    localStorage.setItem('zaloname', name);
+    const el = document.getElementById('zaloname');
+    if (el) el.value = name;
+  }
+
+  // phone: chỉ lấy số, đảm bảo có '0' đầu
+  if (qs.has('phone')) {
+    const raw = (qs.get('phone') || '').replace(/[^0-9]/g, '');
+    const normalized = raw.startsWith('0') ? raw : ('0' + raw);
+    localStorage.setItem('phone', normalized);
+    const ph = document.getElementById('phone');
+    if (ph) ph.value = normalized;
+  }
+})();
+
+	
 loadData();
 
 /* ================== SEARCHABLE SELECT (vanilla) ================== */
@@ -252,10 +276,11 @@ function buildSearchable(kind) {
         select.value = opt.value;
       
         // hiển thị nhãn đã chọn ở placeholder, để user vẫn gõ được ngay
-        search.placeholder = opt.text;
-        search.value = "";
+		search.value = opt.text;
+		search.placeholder = "Gõ để tìm...";
       
         // ẩn list
+		  
         list.classList.add("hidden");
       
         // QUAN TRỌNG: bắn change vào <select> (không phải input search)
@@ -265,7 +290,7 @@ function buildSearchable(kind) {
     });
   }
 
-  search.addEventListener("focus", () => { rebuildList(); list.classList.remove("hidden"); });
+  search.addEventListener("focus", () => { rebuildList();list.classList.remove("hidden");setTimeout(() => { try { search.select(); } catch(e){} }, 0);  });
   search.addEventListener("input", () => { rebuildList(); list.classList.remove("hidden"); });
   document.addEventListener("click", (e) => {
     const wrapper = document.getElementById(`${kind}Wrapper`);
@@ -274,15 +299,15 @@ function buildSearchable(kind) {
 
   // Sync input display from current selected
   const selOpt = select.options[select.selectedIndex];
-  search.placeholder = selOpt ? selOpt.text : "Gõ để tìm...";
-  search.value = "";
+	search.value = selOpt ? selOpt.text : "";
+	search.placeholder = "Gõ để tìm...";
   rebuildList();
 
   // Expose a helper to refresh after options change
  buildSearchable[`refresh_${kind}`] = () => {
    const selOpt2 = select.options[select.selectedIndex];
-   search.placeholder = selOpt2 ? selOpt2.text : "Gõ để tìm...";
-   search.value = "";
+	search.value = selOpt2 ? selOpt2.text : "";
+	search.placeholder = "Gõ để tìm...";
    rebuildList();
  };
 }
