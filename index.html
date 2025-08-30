@@ -555,6 +555,10 @@ document.getElementById("openConfirm").addEventListener("click", () => {
     status.innerText = "⚠️ Vui lòng chọn loại xe.";
     return;
   }
+	if (!d.address.trim()) {
+  status.innerText = "⚠️ Vui lòng nhập số nhà.";
+  return;
+}
   renderConfirmTable(d);
   showModal();
 });
