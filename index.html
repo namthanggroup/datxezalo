@@ -368,11 +368,11 @@ document.getElementById("getLocation").onclick = () => {
       const info = await reverseGeocode(lat, lon);
       const nice = info.display_name || `${lat}, ${lon}`;
       status.innerText = `📍 ${nice}`;
-      const addrInput = document.getElementById("address");
-      if (addrInput && !addrInput.value.trim()) {
+      /* const addrInput = document.getElementById("address");
+		if (addrInput && !addrInput.value.trim()) { 
         addrInput.value = nice;
         saveForm();
-      }
+      }*/
     } catch (err) {
       console.error(err);
       status.innerText = "Đã lấy GPS nhưng không phân giải được tên địa điểm.";
