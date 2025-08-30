@@ -139,17 +139,16 @@
                   class="w-full p-3 border rounded-lg"></textarea>
       </section>
 
-      <!-- Submit sticky -->
-      <div class="h-24"></div>
-      <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3">
-        <button type="button" id="openConfirm" 
-                class="w-full bg-lime-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition">
-          🚕 Đặt cuốc ngay
-        </button>
-        <p id="submitStatus" class="text-center text-sm mt-2"></p>
-      </div>
-    </form>
-  </div>
+		<!-- Submit sticky -->
+		<div class="h-24"></div>
+		<div class="fixed bottom-0 left-0 right-0 bg-white border-t p-3">
+		  <button type="submit" id="openConfirm" 
+		          class="w-full bg-lime-500 text-white py-3 rounded-lg font-semibold hover:bg-rose-600 transition">
+		    🚕 Đặt cuốc ngay
+		  </button>
+		  <p id="submitStatus" class="text-center text-sm mt-2"></p>
+		</div>
+
 
   <!-- Modal xác nhận -->
   <div id="confirmModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
@@ -539,29 +538,59 @@ function renderConfirmTable(d) {
     `<tr><td class="py-2 pr-3 text-gray-500">${k}</td><td class="py-2 font-medium">${v}</td></tr>`
   ).join("");
 }
-document.getElementById("openConfirm").addEventListener("click", () => {
+document.getElementById("orderForm").addEventListener("submit", (e) => {
+  e.preventDefault(); // chặn submit thật, chỉ dùng để kiểm tra required
+
   const d = collectFormData();
   const status = document.getElementById("submitStatus");
   status.innerText = "";
+
+  // kiểm tra thêm ngoài required (VD: format SĐT, carType)
   if (!/^0\d{9,10}$/.test(d.phone)) {
     status.innerText = "⚠️ SĐT phải bắt đầu bằng 0 và có 10–11 số.";
     return;
   }
-  if (!d.province || !d.district || !d.ward || !d.address) {
-    status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã và nhập địa chỉ chi tiết.";
+  if (!d.province || !d.district || !d.ward) {
+    status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã.";
     return;
   }
   if (!d.carType) {
     status.innerText = "⚠️ Vui lòng chọn loại xe.";
     return;
   }
-	if (!d.address.trim()) {
-  status.innerText = "⚠️ Vui lòng nhập số nhà.";
-  return;
-}
+
+  // nếu qua hết thì mở modal xác nhận
   renderConfirmTable(d);
   showModal();
 });
+
+
+
+
+	
+// document.getElementById("openConfirm").addEventListener("submit", () => {
+//   const d = collectFormData();
+//   const status = document.getElementById("submitStatus");
+//   status.innerText = "";
+//   if (!/^0\d{9,10}$/.test(d.phone)) {
+//     status.innerText = "⚠️ SĐT phải bắt đầu bằng 0 và có 10–11 số.";
+//     return;
+//   }
+//   if (!d.province || !d.district || !d.ward || !d.address) {
+//     status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã và nhập địa chỉ chi tiết.";
+//     return;
+//   }
+//   if (!d.carType) {
+//     status.innerText = "⚠️ Vui lòng chọn loại xe.";
+//     return;
+//   }
+// 	if (!d.address.trim()) {
+//   status.innerText = "⚠️ Vui lòng nhập số nhà.";
+//   return;
+// }
+//   renderConfirmTable(d);
+//   showModal();
+// });
 document.getElementById("cancelConfirm").addEventListener("click", hideModal);
 document.getElementById("closeSuccess").addEventListener("click", hideSuccessModal);
 
