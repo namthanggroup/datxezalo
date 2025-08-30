@@ -150,22 +150,23 @@
 		</div>
 
 
-  <!-- Modal xác nhận -->
-  <div id="confirmModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
-    <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
-      <h3 class="text-lg font-semibold mb-3"> ✍️Xác nhận đặt chuyến</h3>
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <tbody id="confirmTable" class="align-top"></tbody>
-        </table>
-      </div>
-      <div class="mt-4 flex gap-2">
-        <button id="cancelConfirm" class="flex-1 py-2 rounded-lg border">❌ Không</button>
-        <button id="finalSubmit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white font-semibold">✅ Xác nhận đặt xe</button>
-      </div>
+<!-- Modal Xác nhận -->
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-96">
+    <h2 class="text-xl font-bold mb-4">Xác nhận đặt cuốc</h2>
+    <div id="confirmTable"></div>
+    <div class="mt-6 flex justify-between">
+      <button type="button" id="cancelConfirm" 
+              class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">
+        ❌ Không
+      </button>
+      <button type="button" id="finalSubmit" 
+              class="px-4 py-2 bg-lime-500 text-white rounded-lg hover:bg-lime-600">
+        ✅ Đồng ý
+      </button>
     </div>
   </div>
-
+</div>
   <!-- Modal thành công -->
   <div id="successModal" class="fixed inset-0 bg-black/40 hidden items-end sm:items-center justify-center z-50">
     <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
@@ -691,8 +692,8 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 }
 function renderTripTypeButtons(currentValue="") {
   const options = [
-    { value: "Đi ngắn (≤20km)", label: "Đi ngắn (≤20km)" },
-    { value: "Đi xa (>20km)",   label: "Đi xa (>20km)" }
+    { value: "Đi ngắn (<20km)", label: "Đi ngắn (<20km)" },
+    { value: "Đi xa (>=20km)",   label: "Đi xa (>=20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
