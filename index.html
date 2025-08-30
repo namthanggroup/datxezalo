@@ -160,7 +160,7 @@
         </table>
       </div>
       <div class="mt-4 flex gap-2">
-        <button id="cancelConfirm" class="flex-1 py-2 rounded-lg border">Không</button>
+        <button id="cancelConfirm" class="flex-1 py-2 rounded-lg border">❌ Không</button>
         <button id="finalSubmit" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white font-semibold">✅ Xác nhận đặt xe</button>
       </div>
     </div>
@@ -400,7 +400,7 @@ function cascadeLoadFromLocalStorage() {
   });
 
   // Trip type buttons
-   const savedTrip = get("tripType") || "Ngắn";   // mặc định đi ngắn
+   const savedTrip = get("tripType") || "Đi ngắn (<20km)";   // mặc định đi ngắn
   renderTripTypeButtons(savedTrip);
   document.getElementById("tripType").value = savedTrip;
 
@@ -460,8 +460,8 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 // Trip type = 2 nút cố định
 function renderTripTypeButtons(currentValue="") {
   const options = [
-    { value: "Ngắn", label: "Đi ngắn (<20km)" },
-    { value: "Xa",   label: "Đi xa (>=20km)" }
+    { value: "Đi ngắn (<20km)", label: "Đi ngắn (<20km)" },
+    { value: "Đi xa (>=20km)",   label: "Đi xa (>=20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
@@ -528,7 +528,7 @@ function renderConfirmTable(d) {
     ["Phường/Xã", d.ward],
     ["Địa chỉ đón", d.address],
     ["Điểm đến", d.destination || "(chưa nhập)"],
-    ["Loại cuốc", d.tripType === "Xa" ? "Đi xa (>=20km)" : "Đi ngắn (<20km)"],
+    ["Loại cuốc", d.tripType === "Đi xa (>=20km)" ? "Đi xa (>=20km)" : "Đi ngắn (<20km)"],
     ["Số lượng xe", d.quantity],
     ["Loại xe", d.carType],
     ["Ghi chú", d.note || "(không)"]
@@ -591,7 +591,7 @@ document.getElementById("orderForm").addEventListener("submit", (e) => {
 //   renderConfirmTable(d);
 //   showModal();
 // });
-document.getElementById("cancelConfirm").addEventListener("click", hideModal);
+document.getElementById("cancelConfirm").addEventListener("click", () =>{hideModal();});
 document.getElementById("closeSuccess").addEventListener("click", hideSuccessModal);
 
 /* Gửi lần cuối (sau khi xác nhận) */
@@ -691,8 +691,8 @@ function renderButtonGroup(containerId, options, currentValue, onChange) {
 }
 function renderTripTypeButtons(currentValue="") {
   const options = [
-    { value: "Ngắn", label: "Đi ngắn (≤20km)" },
-    { value: "Xa",   label: "Đi xa (>20km)" }
+    { value: "Đi ngắn (≤20km)", label: "Đi ngắn (≤20km)" },
+    { value: "Đi xa (>20km)",   label: "Đi xa (>20km)" }
   ];
   const onChange = (val) => {
     document.getElementById("tripType").value = val;
