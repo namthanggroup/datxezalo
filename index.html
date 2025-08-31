@@ -524,9 +524,6 @@ function renderConfirmTable(d) {
   const rows = [
 	["Tên người đặt", d.zaloname],
     ["SĐT", d.phone],
-    ["Tỉnh/TP", d.province],
-    ["Quận/Huyện", d.district],
-    ["Phường/Xã", d.ward],
     ["Địa chỉ đón", d.address],
     ["Điểm đến", d.destination || "(chưa nhập)"],
     ["Loại cuốc", d.tripType === "Đi xa (>=20km)" ? "Đi xa (>=20km)" : "Đi ngắn (<20km)"],
