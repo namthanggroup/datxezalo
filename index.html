@@ -544,16 +544,13 @@ document.getElementById("openConfirm").addEventListener("click", () => {
     status.innerText = "⚠️ SĐT phải bắt đầu bằng 0 và có 10–11 số.";
     return;
   }
-  if (!d.province || !d.district || !d.ward || !d.address) {
-    status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã và nhập địa chỉ chi tiết.";
-    return;
-  }
-  if (!d.carType) {
-    status.innerText = "⚠️ Vui lòng chọn loại xe.";
-    return;
-  }
-	if (!d.address.trim()) {
-  status.innerText = "⚠️ Vui lòng nhập số nhà.";
+const addrDetail = document.getElementById("address").value.trim();
+if (!d.province || !d.district || !d.ward || !addrDetail) {
+  status.innerText = "⚠️ Vui lòng chọn đủ tỉnh/huyện/xã và nhập địa chỉ chi tiết.";
+  return;
+}
+if (!d.carType) {
+  status.innerText = "⚠️ Vui lòng chọn loại xe.";
   return;
 }
   renderConfirmTable(d);
