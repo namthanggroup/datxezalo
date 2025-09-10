@@ -531,11 +531,19 @@ function renderConfirmTable(d) {
     ["Loại xe", d.carType],
     ["Ghi chú", d.note || "(không)"]
   ];
-  const tbody = document.getElementById("confirmTable");
-  tbody.innerHTML = rows.map(([k,v]) =>
-    `<tr><td class="py-2 pr-3 text-gray-500">${k}</td><td class="py-2 font-medium">${v}</td></tr>`
-  ).join("");
-}
+//   const tbody = document.getElementById("confirmTable");
+//   tbody.innerHTML = rows.map(([k,v]) =>
+//     `<tr><td class="py-2 pr-3 text-gray-500">${k}</td><td class="py-2 font-medium">${v}</td></tr>`
+//   ).join("");
+// }
+	const tbody = document.getElementById("confirmTable");
+tbody.innerHTML = rows.map(([k,v]) =>
+  `<tr>
+     <td class="w-40 py-2 pr-3 text-gray-500 font-medium">${k}</td>
+     <td class="py-2 font-medium">${v}</td>
+   </tr>`
+).join("");
+	
 document.getElementById("openConfirm").addEventListener("click", () => {
   const d = collectFormData();
   const status = document.getElementById("submitStatus");
