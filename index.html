@@ -543,7 +543,7 @@ tbody.innerHTML = rows.map(([k,v]) =>
      <td class="py-2 font-medium">${v}</td>
    </tr>`
 ).join("");
-	
+}
 document.getElementById("openConfirm").addEventListener("click", () => {
   const d = collectFormData();
   const status = document.getElementById("submitStatus");
